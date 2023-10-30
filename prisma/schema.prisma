@@ -23,41 +23,42 @@ model Customer {
   email       String     @unique
   phone       String     @unique
   password    String
-  Booking     Booking[]
-  Review      Review[]
-  ChatRoom    ChatRoom[]
+  Bookings    Booking[]
+  Reviews     Review[]
+  ChatRooms   ChatRoom[]
 }
 
 model Admin {
-  id       String     @id
-  isAdmin  Int
-  email    String     @unique
-  password String
-  ChatRoom ChatRoom[]
+  id        String     @id
+  isAdmin   Int
+  email     String     @unique
+  password  String
+  ChatRooms ChatRoom[]
 }
 
 model Restaurant {
-  id              String            @id
-  restaurantName  String            @unique
-  ownerFirstName  String
-  ownerLastName   String
-  email           String            @unique
-  phone           String            @unique
-  password        String
-  profileImg      String?
-  googleAddress   String
-  categoryId      Int
-  category        Category          @relation(fields: [categoryId], references: [id])
-  districtId      Int
-  district        District          @relation(fields: [districtId], references: [id])
-  nationId        Int
-  nation          Nation            @relation(fields: [nationId], references: [id])
-  status          Int
-  Booking         Booking[]
-  Review          Review[]
-  RestaurantImage RestaurantImage[]
-  Package         Package[]
-  BusinessTime    BusinessTime[]
+  id               String            @id
+  restaurantName   String            @unique
+  ownerFirstName   String
+  ownerLastName    String
+  email            String            @unique
+  phone            String            @unique
+  password         String
+  profileImg       String?
+  googleAddress    String
+  price            String
+  categoryId       Int
+  category         Category          @relation(fields: [categoryId], references: [id])
+  districtId       Int
+  district         District          @relation(fields: [districtId], references: [id])
+  nationId         Int
+  nation           Nation            @relation(fields: [nationId], references: [id])
+  status           Int
+  Bookings         Booking[]
+  Reviews          Review[]
+  RestaurantImages RestaurantImage[]
+  Packages         Package[]
+  BusinessTimes    BusinessTime[]
 }
 
 model RestaurantImage {
@@ -68,31 +69,32 @@ model RestaurantImage {
 }
 
 model Category {
-  id         Int          @id @default(autoincrement())
-  name       String       @unique
-  Restaurant Restaurant[]
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  Restaurants Restaurant[]
 }
 
 model District {
-  id         Int          @id @default(autoincrement())
-  name       String
-  Restaurant Restaurant[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  Restaurants Restaurant[]
 }
 
 model Nation {
-  id         Int          @id @default(autoincrement())
-  name       String
-  Restaurant Restaurant[]
+  id          Int          @id @default(autoincrement())
+  name        String
+  Restaurants Restaurant[]
 }
 
 model Package {
-  id           Int            @id @default(autoincrement())
-  name         String
-  detail       String
-  price        Int
-  restaurantId String
-  restaurant   Restaurant     @relation(fields: [restaurantId], references: [id])
-  BusinessTime BusinessTime[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  detail        String
+  price         Int
+  img           String?
+  restaurantId  String
+  restaurant    Restaurant     @relation(fields: [restaurantId], references: [id])
+  BusinessTimes BusinessTime[]
 }
 
 model Booking {
@@ -107,8 +109,8 @@ model Booking {
   totalKid      Int
   createdAt     DateTime   @default(now())
   bookingTime   DateTime
-  Payment       Payment[]
-  ChatRoom      ChatRoom[]
+  Payments      Payment[]
+  ChatRooms     ChatRoom[]
 }
 
 model Review {
@@ -119,7 +121,7 @@ model Review {
   customer     Customer      @relation(fields: [customerId], references: [id])
   isAnonymous  Int
   score        Float
-  ReviewImage  ReviewImage[]
+  ReviewImages ReviewImage[]
   customerId   String
 }
 

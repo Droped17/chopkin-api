@@ -11,9 +11,9 @@ Table Customer {
   email String [unique, not null]
   phone String [unique, not null]
   password String [not null]
-  Booking Booking [not null]
-  Review Review [not null]
-  ChatRoom ChatRoom [not null]
+  Bookings Booking [not null]
+  Reviews Review [not null]
+  ChatRooms ChatRoom [not null]
 }
 
 Table Admin {
@@ -21,7 +21,7 @@ Table Admin {
   isAdmin Int [not null]
   email String [unique, not null]
   password String [not null]
-  ChatRoom ChatRoom [not null]
+  ChatRooms ChatRoom [not null]
 }
 
 Table Restaurant {
@@ -34,6 +34,7 @@ Table Restaurant {
   password String [not null]
   profileImg String
   googleAddress String [not null]
+  price String [not null]
   categoryId Int [not null]
   category Category [not null]
   districtId Int [not null]
@@ -41,11 +42,11 @@ Table Restaurant {
   nationId Int [not null]
   nation Nation [not null]
   status Int [not null]
-  Booking Booking [not null]
-  Review Review [not null]
-  RestaurantImage RestaurantImage [not null]
-  Package Package [not null]
-  BusinessTime BusinessTime [not null]
+  Bookings Booking [not null]
+  Reviews Review [not null]
+  RestaurantImages RestaurantImage [not null]
+  Packages Package [not null]
+  BusinessTimes BusinessTime [not null]
 }
 
 Table RestaurantImage {
@@ -58,19 +59,19 @@ Table RestaurantImage {
 Table Category {
   id Int [pk, increment]
   name String [unique, not null]
-  Restaurant Restaurant [not null]
+  Restaurants Restaurant [not null]
 }
 
 Table District {
   id Int [pk, increment]
   name String [not null]
-  Restaurant Restaurant [not null]
+  Restaurants Restaurant [not null]
 }
 
 Table Nation {
   id Int [pk, increment]
   name String [not null]
-  Restaurant Restaurant [not null]
+  Restaurants Restaurant [not null]
 }
 
 Table Package {
@@ -78,9 +79,10 @@ Table Package {
   name String [not null]
   detail String [not null]
   price Int [not null]
+  img String
   restaurantId String [not null]
   restaurant Restaurant [not null]
-  BusinessTime BusinessTime [not null]
+  BusinessTimes BusinessTime [not null]
 }
 
 Table Booking {
@@ -95,8 +97,8 @@ Table Booking {
   totalKid Int [not null]
   createdAt DateTime [default: `now()`, not null]
   bookingTime DateTime [not null]
-  Payment Payment [not null]
-  ChatRoom ChatRoom [not null]
+  Payments Payment [not null]
+  ChatRooms ChatRoom [not null]
 }
 
 Table Review {
@@ -107,7 +109,7 @@ Table Review {
   customer Customer [not null]
   isAnonymous Int [not null]
   score Float [not null]
-  ReviewImage ReviewImage [not null]
+  ReviewImages ReviewImage [not null]
   customerId String [not null]
 }
 
