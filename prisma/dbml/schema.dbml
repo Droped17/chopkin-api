@@ -18,7 +18,7 @@ Table Customer {
 
 Table Admin {
   id String [pk]
-  isAdmin Int [not null]
+  isAdmin Int [not null, default: 1]
   email String [unique, not null]
   password String [not null]
   ChatRooms ChatRoom [not null]
@@ -41,7 +41,7 @@ Table Restaurant {
   district District [not null]
   nationId Int [not null]
   nation Nation [not null]
-  status Int [not null]
+  status Int [not null, default: 0]
   Bookings Booking [not null]
   Reviews Review [not null]
   RestaurantImages RestaurantImage [not null]
@@ -91,14 +91,20 @@ Table Booking {
   customer Customer [not null]
   restaurantId String [not null]
   restaurant Restaurant [not null]
-  orderStatus Int [not null]
-  paymentStatus Int [not null]
+  orderStatus Int [not null, default: 0]
+  payment Payment [not null]
+  paymentId String [not null]
   totalCustomer Int [not null]
   totalKid Int [not null]
   createdAt DateTime [default: `now()`, not null]
   bookingTime DateTime [not null]
-  Payments Payment [not null]
   ChatRooms ChatRoom [not null]
+}
+
+Table Payment {
+  id String [pk]
+  paymentStatus Int [not null, default: 1]
+  Booking Booking [not null]
 }
 
 Table Review {
@@ -107,17 +113,10 @@ Table Review {
   restaurant Restaurant [not null]
   reviewerId String [not null]
   customer Customer [not null]
-  isAnonymous Int [not null]
+  isAnonymous Int [not null, default: 0]
   score Float [not null]
   ReviewImages ReviewImage [not null]
   customerId String [not null]
-}
-
-Table Payment {
-  id String [pk]
-  paymentStatus Int [not null]
-  bookingId String [not null]
-  booking Booking [not null]
 }
 
 Table ReviewImage {
@@ -130,8 +129,8 @@ Table ReviewImage {
 Table ChatRoom {
   id Int [pk, increment]
   roomIdBySocket String [not null]
-  adminId String [not null]
-  admin Admin [not null]
+  adminId String
+  admin Admin
   customerId String [not null]
   customer Customer [not null]
   bookingId String
@@ -163,11 +162,11 @@ Ref: Booking.customerId > Customer.id
 
 Ref: Booking.restaurantId > Restaurant.id
 
+Ref: Booking.paymentId > Payment.id
+
 Ref: Review.restaurantId > Restaurant.id
 
 Ref: Review.customerId > Customer.id
-
-Ref: Payment.bookingId > Booking.id
 
 Ref: ReviewImage.reviewId > Review.id
 
