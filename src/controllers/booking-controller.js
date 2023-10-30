@@ -141,9 +141,25 @@ const deleteBookingById = async(req,res,next)=>{
     }
 }
 
-const updateOrderStatus = async(req,res,next)=>{
+//patch
+const updateOrderStatusByBookingId = async(req,res,next)=>{
     try{
         //update order status
+        const bookingId = req.body.bookingId;
+        const orderStatusUpdate = req.body.status;//0,1,2
+
+        const bookingForUpdate = await prisma.booking.findFirst({
+            where:{
+                id:bookingId
+            },
+            data:{
+                orderStatus:orderStatusUpdate
+            }
+
+        });
+
+        res.status(200).json({message:"update Complete",bookingForUpdate});
+
 
     }catch(error){
         next(error);
@@ -152,11 +168,12 @@ const updateOrderStatus = async(req,res,next)=>{
 
 
 
-exports.updateOrderStatus = updateOrderStatus;
-exports.updatePaymentStatus = updatePaymentStatus;
+exports.updateOrderStatusByBookingId = updateOrderStatusByBookingId;
 exports.getBookingByCustomerId = getBookingByCustomerId;
 exports.getBookingByStatus = getBookingByStatus;
 exports.deleteBookingById = deleteBookingById;
 exports.userBooking = userBooking;
 exports.getAllBooking = getAllBooking;
 exports.getBookingByRestaurantId = getBookingByRestaurantId;
+
+// exports.updatePaymentStatus = updatePaymentStatus;
