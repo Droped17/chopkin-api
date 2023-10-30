@@ -19,7 +19,7 @@ const prisma = require("../models/prisma");
 //get by customerId
 const getBookingByCustomerId = async(req,res,next)=>{
     try{
-
+        // const bookingId = await prism
 
 
     }
