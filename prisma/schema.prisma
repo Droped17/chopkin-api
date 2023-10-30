@@ -57,6 +57,7 @@ model Restaurant {
   Review          Review[]
   RestaurantImage RestaurantImage[]
   Package         Package[]
+  BusinessTime    BusinessTime[]
 }
 
 model RestaurantImage {
@@ -85,12 +86,13 @@ model Nation {
 }
 
 model Package {
-  id           Int        @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   name         String
   detail       String
   price        Int
   restaurantId String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant     @relation(fields: [restaurantId], references: [id])
+  BusinessTime BusinessTime[]
 }
 
 model Booking {
@@ -144,4 +146,15 @@ model ChatRoom {
   customer       Customer @relation(fields: [customerId], references: [id])
   bookingId      String?
   booking        Booking? @relation(fields: [bookingId], references: [id])
+}
+
+model BusinessTime {
+  id           Int        @id @default(autoincrement())
+  day          Int
+  openTime     String
+  closedTime   String
+  package      Package    @relation(fields: [packageId], references: [id])
+  packageId    Int
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
 }

@@ -45,6 +45,7 @@ Table Restaurant {
   Review Review [not null]
   RestaurantImage RestaurantImage [not null]
   Package Package [not null]
+  BusinessTime BusinessTime [not null]
 }
 
 Table RestaurantImage {
@@ -79,6 +80,7 @@ Table Package {
   price Int [not null]
   restaurantId String [not null]
   restaurant Restaurant [not null]
+  BusinessTime BusinessTime [not null]
 }
 
 Table Booking {
@@ -134,6 +136,17 @@ Table ChatRoom {
   booking Booking
 }
 
+Table BusinessTime {
+  id Int [pk, increment]
+  day Int [not null]
+  openTime String [not null]
+  closedTime String [not null]
+  package Package [not null]
+  packageId Int [not null]
+  restaurant Restaurant [not null]
+  restaurantId String [not null]
+}
+
 Ref: Restaurant.categoryId > Category.id
 
 Ref: Restaurant.districtId > District.id
@@ -161,3 +174,7 @@ Ref: ChatRoom.adminId > Admin.id
 Ref: ChatRoom.customerId > Customer.id
 
 Ref: ChatRoom.bookingId > Booking.id
+
+Ref: BusinessTime.packageId > Package.id
+
+Ref: BusinessTime.restaurantId > Restaurant.id
