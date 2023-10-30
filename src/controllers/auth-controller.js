@@ -12,7 +12,7 @@ exports.register = async (req, res, next) => {
     }
     value.password = await bcrypt.hash(value.password, 12);
     const customer = await prisma.customer.create({ data: value });
-    const payload = { CustomerId: Customer.id };
+    const payload = { customerId: customer.id };
     const accessToken = jwt.sign(
       payload,
       process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
@@ -46,13 +46,14 @@ exports.login = async (req, res, next) => {
     if (!isMatch) {
       return next(createError("invalid credential", 400));
     }
-    const payload = { CustomerId: customer.id };
+    const payload = { customerId: customer.id };
     const accessToken = jwt.sign(
       payload,
       process.env.JWT_SECRET_KEY || "8ICNd310ncCXaldnenq",
       { expiresIn: process.env.JWT_EXPIRE }
     );
-    res.status(200).json({ accessToken });
+    delete customer.password;
+    res.status(200).json({ accessToken, customer });
   } catch (err) {
     next(err);
   }
