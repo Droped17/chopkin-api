@@ -1,0 +1,163 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table Customer {
+  id String [pk]
+  firstName String [not null]
+  lastName String [not null]
+  profileImg String
+  memberPoint Int [not null]
+  email String [unique, not null]
+  phone String [unique, not null]
+  password String [not null]
+  Booking Booking [not null]
+  Review Review [not null]
+  ChatRoom ChatRoom [not null]
+}
+
+Table Admin {
+  id String [pk]
+  isAdmin Int [not null]
+  email String [unique, not null]
+  password String [not null]
+  ChatRoom ChatRoom [not null]
+}
+
+Table Restaurant {
+  id String [pk]
+  restaurantName String [unique, not null]
+  ownerFirstName String [not null]
+  ownerLastName String [not null]
+  email String [unique, not null]
+  phone String [unique, not null]
+  password String [not null]
+  profileImg String
+  googleAddress String [not null]
+  categoryId Int [not null]
+  category Category [not null]
+  districtId Int [not null]
+  district District [not null]
+  nationId Int [not null]
+  nation Nation [not null]
+  status Int [not null]
+  Booking Booking [not null]
+  Review Review [not null]
+  RestaurantImage RestaurantImage [not null]
+  Package Package [not null]
+}
+
+Table RestaurantImage {
+  id Int [pk, increment]
+  url String [not null]
+  restaurantId String [not null]
+  restaurant Restaurant [not null]
+}
+
+Table Category {
+  id Int [pk, increment]
+  name String [unique, not null]
+  Restaurant Restaurant [not null]
+}
+
+Table District {
+  id Int [pk, increment]
+  name String [not null]
+  Restaurant Restaurant [not null]
+}
+
+Table Nation {
+  id Int [pk, increment]
+  name String [not null]
+  Restaurant Restaurant [not null]
+}
+
+Table Package {
+  id Int [pk, increment]
+  name String [not null]
+  detail String [not null]
+  price Int [not null]
+  restaurantId String [not null]
+  restaurant Restaurant [not null]
+}
+
+Table Booking {
+  id String [pk]
+  customerId String [not null]
+  customer Customer [not null]
+  restaurantId String [not null]
+  restaurant Restaurant [not null]
+  orderStatus Int [not null]
+  paymentStatus Int [not null]
+  totalCustomer Int [not null]
+  totalKid Int [not null]
+  createdAt DateTime [default: `now()`, not null]
+  bookingTime DateTime [not null]
+  Payment Payment [not null]
+  ChatRoom ChatRoom [not null]
+}
+
+Table Review {
+  id Int [pk, increment]
+  restaurantId String [not null]
+  restaurant Restaurant [not null]
+  reviewerId String [not null]
+  customer Customer [not null]
+  isAnonymous Int [not null]
+  score Float [not null]
+  ReviewImage ReviewImage [not null]
+  customerId String [not null]
+}
+
+Table Payment {
+  id String [pk]
+  paymentStatus Int [not null]
+  bookingId String [not null]
+  booking Booking [not null]
+}
+
+Table ReviewImage {
+  id Int [pk, increment]
+  url String [not null]
+  reviewId Int [not null]
+  review Review [not null]
+}
+
+Table ChatRoom {
+  id Int [pk, increment]
+  roomIdBySocket String [not null]
+  adminId String [not null]
+  admin Admin [not null]
+  customerId String [not null]
+  customer Customer [not null]
+  bookingId String
+  booking Booking
+}
+
+Ref: Restaurant.categoryId > Category.id
+
+Ref: Restaurant.districtId > District.id
+
+Ref: Restaurant.nationId > Nation.id
+
+Ref: RestaurantImage.restaurantId > Restaurant.id
+
+Ref: Package.restaurantId > Restaurant.id
+
+Ref: Booking.customerId > Customer.id
+
+Ref: Booking.restaurantId > Restaurant.id
+
+Ref: Review.restaurantId > Restaurant.id
+
+Ref: Review.customerId > Customer.id
+
+Ref: Payment.bookingId > Booking.id
+
+Ref: ReviewImage.reviewId > Review.id
+
+Ref: ChatRoom.adminId > Admin.id
+
+Ref: ChatRoom.customerId > Customer.id
+
+Ref: ChatRoom.bookingId > Booking.id

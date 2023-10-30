@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id          String     @id
+  firstName   String
+  lastName    String
+  profileImg  String?
+  memberPoint Int
+  email       String     @unique
+  phone       String     @unique
+  password    String
+  Booking     Booking[]
+  Review      Review[]
+  ChatRoom    ChatRoom[]
+}
+
+model Admin {
+  id       String     @id
+  isAdmin  Int
+  email    String     @unique
+  password String
+  ChatRoom ChatRoom[]
+}
+
+model Restaurant {
+  id              String            @id
+  restaurantName  String            @unique
+  ownerFirstName  String
+  ownerLastName   String
+  email           String            @unique
+  phone           String            @unique
+  password        String
+  profileImg      String?
+  googleAddress   String
+  categoryId      Int
+  category        Category          @relation(fields: [categoryId], references: [id])
+  districtId      Int
+  district        District          @relation(fields: [districtId], references: [id])
+  nationId        Int
+  nation          Nation            @relation(fields: [nationId], references: [id])
+  status          Int
+  Booking         Booking[]
+  Review          Review[]
+  RestaurantImage RestaurantImage[]
+  Package         Package[]
+}
+
+model RestaurantImage {
+  id           Int        @id @default(autoincrement())
+  url          String
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
+model Category {
+  id         Int          @id @default(autoincrement())
+  name       String       @unique
+  Restaurant Restaurant[]
+}
+
+model District {
+  id         Int          @id @default(autoincrement())
+  name       String
+  Restaurant Restaurant[]
+}
+
+model Nation {
+  id         Int          @id @default(autoincrement())
+  name       String
+  Restaurant Restaurant[]
+}
+
+model Package {
+  id           Int        @id @default(autoincrement())
+  name         String
+  detail       String
+  price        Int
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+}
+
+model Booking {
+  id            String     @id
+  customerId    String
+  customer      Customer   @relation(fields: [customerId], references: [id])
+  restaurantId  String
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
+  orderStatus   Int
+  paymentStatus Int
+  totalCustomer Int
+  totalKid      Int
+  createdAt     DateTime   @default(now())
+  bookingTime   DateTime
+  Payment       Payment[]
+  ChatRoom      ChatRoom[]
+}
+
+model Review {
+  id           Int           @id @default(autoincrement())
+  restaurantId String
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id])
+  reviewerId   String
+  customer     Customer      @relation(fields: [customerId], references: [id])
+  isAnonymous  Int
+  score        Float
+  ReviewImage  ReviewImage[]
+  customerId   String
+}
+
+model Payment {
+  id            String  @id @default(uuid())
+  paymentStatus Int
+  bookingId     String
+  booking       Booking @relation(fields: [bookingId], references: [id])
+}
+
+model ReviewImage {
+  id       Int    @id @default(autoincrement())
+  url      String
+  reviewId Int
+  review   Review @relation(fields: [reviewId], references: [id])
+}
+
+model ChatRoom {
+  id             Int      @id @default(autoincrement())
+  roomIdBySocket String
+  adminId        String
+  admin          Admin    @relation(fields: [adminId], references: [id])
+  customerId     String
+  customer       Customer @relation(fields: [customerId], references: [id])
+  bookingId      String?
+  booking        Booking? @relation(fields: [bookingId], references: [id])
+}
