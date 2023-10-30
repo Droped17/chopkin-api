@@ -5,6 +5,7 @@ const cors = require("cors");
 const app = express();
 
 const restaurantRoute = require("./routes/restaurant-route");
+const chatRoute = require("./routes/chat-route");
 const notFoundMiddleware = require("./middleware/notFoundMiddleware");
 const errorMw = require("./middleware/errorMiddleware");
 
@@ -13,6 +14,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/restaurant", restaurantRoute);
+app.use("/chat", chatRoute);
 
 app.use(notFoundMiddleware);
 app.use(errorMw);
