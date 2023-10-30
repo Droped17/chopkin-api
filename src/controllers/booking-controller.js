@@ -111,8 +111,11 @@ const userBooking =async(req,res,next)=>{
             }
         });
 
+        res.status(200).json({message:"create Booking",createdBooking});
+
     }
     catch(error){
+        next(error);
 
     }
 }
@@ -120,9 +123,15 @@ const userBooking =async(req,res,next)=>{
 //delete booking
 const deleteBookingById = async(req,res,next)=>{
     try{
+        const bookingId = rea.params.bookingId;
+        await prisma.booking.delete({
+            where:{
+                id:bookingId
+            }
+        });
 
     }catch(error){
-
+        next(error);
     }
 }
 
