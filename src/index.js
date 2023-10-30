@@ -5,12 +5,17 @@ const cors = require("cors");
 const app = express();
 
 const restaurantRoute = require("./routes/restaurant-route");
+const notFoundMiddleware = require("./middleware/notFoundMiddleware");
+const errorMw = require("./middleware/errorMiddleware");
 
 app.use(cors());
-app.use(morgan());
+app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/restaurant", restaurantRoute);
+
+app.use(notFoundMiddleware);
+app.use(errorMw);
 
 const port = process.env.PORT || 8000;
 app.listen(port, () => console.log("server is running on port", port));

@@ -1,4 +1,4 @@
-import prisma from "../models/prisma";
+const prisma = require("../models/prisma");
 
 exports.getAllRes = async (req, res, next) => {
   try {
@@ -14,6 +14,13 @@ exports.getAllRes = async (req, res, next) => {
       },
     });
     res.status(200).json(restaurants);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getResById = (req, res, next) => {
+  try {
   } catch (err) {
     next(err);
   }
