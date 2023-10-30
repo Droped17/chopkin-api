@@ -30,7 +30,7 @@ model Customer {
 
 model Admin {
   id        String     @id
-  isAdmin   Int        @default(1)
+  isAdmin   Int
   email     String     @unique
   password  String
   ChatRooms ChatRoom[]
@@ -53,7 +53,7 @@ model Restaurant {
   district         District          @relation(fields: [districtId], references: [id])
   nationId         Int
   nation           Nation            @relation(fields: [nationId], references: [id])
-  status           Int               @default(0)
+  status           Int
   Bookings         Booking[]
   Reviews          Review[]
   RestaurantImages RestaurantImage[]
@@ -103,20 +103,14 @@ model Booking {
   customer      Customer   @relation(fields: [customerId], references: [id])
   restaurantId  String
   restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
-  orderStatus   Int        @default(0)
-  payment       Payment    @relation(fields: [paymentId], references: [id])
-  paymentId     String
+  orderStatus   Int
+  paymentStatus Int
   totalCustomer Int
   totalKid      Int
   createdAt     DateTime   @default(now())
   bookingTime   DateTime
+  Payments      Payment[]
   ChatRooms     ChatRoom[]
-}
-
-model Payment {
-  id            String    @id @default(uuid())
-  paymentStatus Int       @default(1)
-  Booking       Booking[]
 }
 
 model Review {
@@ -125,10 +119,17 @@ model Review {
   restaurant   Restaurant    @relation(fields: [restaurantId], references: [id])
   reviewerId   String
   customer     Customer      @relation(fields: [customerId], references: [id])
-  isAnonymous  Int           @default(0)
+  isAnonymous  Int
   score        Float
   ReviewImages ReviewImage[]
   customerId   String
+}
+
+model Payment {
+  id            String  @id @default(uuid())
+  paymentStatus Int
+  bookingId     String
+  booking       Booking @relation(fields: [bookingId], references: [id])
 }
 
 model ReviewImage {
@@ -141,8 +142,8 @@ model ReviewImage {
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomIdBySocket String
-  adminId        String?
-  admin          Admin?   @relation(fields: [adminId], references: [id])
+  adminId        String
+  admin          Admin    @relation(fields: [adminId], references: [id])
   customerId     String
   customer       Customer @relation(fields: [customerId], references: [id])
   bookingId      String?
