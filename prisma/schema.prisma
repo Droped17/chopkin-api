@@ -30,7 +30,7 @@ model Customer {
 
 model Admin {
   id        String     @id
-  isAdmin   Int        @default(1)
+  isAdmin   Int
   email     String     @unique
   password  String
   ChatRooms ChatRoom[]
@@ -52,6 +52,8 @@ model Restaurant {
   districtId       Int
   district         District          @relation(fields: [districtId], references: [id],onDelete: Cascade)
   nationId         Int
+  nation           Nation            @relation(fields: [nationId], references: [id])
+  status           Int
   nation           Nation            @relation(fields: [nationId], references: [id],onDelete: Cascade)
   status           Int               @default(0)
   Bookings         Booking[]
@@ -102,6 +104,9 @@ model Booking {
   customerId    String
   customer      Customer   @relation(fields: [customerId], references: [id],onDelete: Cascade)
   restaurantId  String
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
+  orderStatus   Int
+  paymentStatus Int
   restaurant    Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
   orderStatus   Int        @default(0)
   payment       Payment    @relation(fields: [paymentId], references: [id],onDelete: Cascade)
@@ -110,13 +115,8 @@ model Booking {
   totalKid      Int
   createdAt     DateTime   @default(now())
   bookingTime   DateTime
+  Payments      Payment[]
   ChatRooms     ChatRoom[]
-}
-
-model Payment {
-  id            String    @id @default(uuid())
-  paymentStatus Int       @default(1)
-  Booking       Booking[]
 }
 
 model Review {
@@ -124,11 +124,20 @@ model Review {
   restaurantId String
   restaurant   Restaurant    @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
   reviewerId   String
+  customer     Customer      @relation(fields: [customerId], references: [id])
+  isAnonymous  Int
   customer     Customer      @relation(fields: [customerId], references: [id],onDelete: Cascade)
   isAnonymous  Int           @default(0)
   score        Float
   ReviewImages ReviewImage[]
   customerId   String
+}
+
+model Payment {
+  id            String  @id @default(uuid())
+  paymentStatus Int
+  bookingId     String
+  booking       Booking @relation(fields: [bookingId], references: [id])
 }
 
 model ReviewImage {
@@ -141,6 +150,8 @@ model ReviewImage {
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomIdBySocket String
+  adminId        String
+  admin          Admin    @relation(fields: [adminId], references: [id])
   adminId        String?
   admin          Admin?   @relation(fields: [adminId], references: [id],onDelete: Cascade)
   customerId     String

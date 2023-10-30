@@ -16,6 +16,12 @@ const prisma = require("../models/prisma");
 //     ChatRoom      ChatRoom[]
 //   }
 
+// model Payment {
+//     id            String    @id @default(uuid())
+//     paymentStatus Int       @default(1)
+//     Booking       Booking[]
+//   }
+
 //get by customerId
 const getBookingByCustomerId = async(req,res,next)=>{
     try{
@@ -135,7 +141,19 @@ const deleteBookingById = async(req,res,next)=>{
     }
 }
 
+const updateOrderStatus = async(req,res,next)=>{
+    try{
+        //update order status
 
+    }catch(error){
+        next(error);
+    }
+}
+
+
+
+exports.updateOrderStatus = updateOrderStatus;
+exports.updatePaymentStatus = updatePaymentStatus;
 exports.getBookingByCustomerId = getBookingByCustomerId;
 exports.getBookingByStatus = getBookingByStatus;
 exports.deleteBookingById = deleteBookingById;
