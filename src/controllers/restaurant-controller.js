@@ -107,14 +107,6 @@ exports.getResByCat = async (req, res, next) => {
   }
 };
 
-exports.createRes = async (req, res, next) => {
-  try {
-  } catch (err) {
-    console.log(err);
-    next(err);
-  }
-};
-
 exports.deleteRes = async (req, res, next) => {
   try {
     const { error, value } = resIdSchema.validate(req.params);
@@ -143,7 +135,7 @@ exports.deleteRes = async (req, res, next) => {
   }
 };
 
-exports.editRes = async (req, res, next) => {
+exports.createEditPending = async (req, res, next) => {
   try {
     const { error, value } = resIdSchema.validate(req.params);
     if (error) {
@@ -255,7 +247,7 @@ exports.updateResStatus = async (req, res, next) => {
         .json({ message: "Restaurant is now shown on the website." });
       return;
     }
-    if (foundRes.status === 0) {
+    if (foundRes.status === 1) {
       await prisma.restaurant.update({
         data: {
           status: 0,
