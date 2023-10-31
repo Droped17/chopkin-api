@@ -4,16 +4,17 @@ require("dotenv").config();
 const cors = require("cors");
 const app = express();
 
-const restaurantRoute = require("./routes/restaurant-route");
-const chatRoute = require("./routes/chat-route");
-const notFoundMiddleware = require("./middleware/notFoundMiddleware");
-const errorMw = require("./middleware/errorMiddleware");
-const authRoute = require("./routes/auth-routhes");
-const packageRoute = require("./routes/package-route");
+const restaurantRoute = require("../src/routes/restaurant-route");
+const chatRoute = require("../src/routes/chat-route");
+const notFoundMiddleware = require("../src/middleware/notFoundMiddleware");
+const errorMw = require("../src/middleware/errorMiddleware");
+const authRoute = require("../src/routes/auth-route");
+const packageRoute = require("../src/routes/package-route");
 
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(express.static("public"));
 
 app.use("/restaurant", restaurantRoute);
 app.use("/chat", chatRoute);
