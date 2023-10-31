@@ -45,9 +45,9 @@ model Restaurant {
   phone                 String                  @unique
   password              String                  @default("1234")
   profileImg            String?
-  latitude              String?
-  longitude             String?
-  price                 String
+  latitude              Float?
+  longitude             Float?
+  price                 Int
   categoryIndex         Int
   districtIndex         Int?
   nationIndex           Int
