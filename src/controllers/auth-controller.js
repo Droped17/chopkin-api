@@ -70,13 +70,93 @@ const createError = require("../utils/create-error");
 // }
 
 
-//   firstName   String
-//   lastName    String
-//   profileImg  String?
-//   memberPoint Int
-//   email       String     @unique
-//   phone       String     @unique
-//   password    String
+// id               String            @id
+// restaurantName   String            @unique
+// ownerFirstName   String
+// ownerLastName    String
+// email            String            @unique
+// phone            String            @unique
+// password         String
+// profileImg       String?
+// latitude         String?
+// longitude        String?
+// price            String
+// categoryId       Int
+// category         Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+// districtId       Int?
+// district         District?         @relation(fields: [districtId], references: [id], onDelete: Cascade)
+// nationId         Int
+// nation           Nation            @relation(fields: [nationId], references: [id], onDelete: Cascade)
+// status           Int               @default(0)
+// Bookings         Booking[]
+// Reviews          Review[]
+// RestaurantImages RestaurantImage[]
+// Packages         Package[]
+// BusinessTime     BusinessTime[]
+
+const CreateRestaurants = async(req,res,next)=>{
+  try{
+      
+      const data = req.body;
+      let category = await prisma.category.findFirst({
+        where:{
+          name:data.category
+        }
+      });
+      if(!category){
+        category = await prisma.category.create({
+          name:data.category
+        });
+      }
+
+      let district= await prisma.district.findFirst({
+        where:{
+          name:data.district
+        }
+      });
+
+      if(!district){
+        district = await prisma.district.create({
+          data:{
+            name:data.district
+          }
+        })
+      }
+      let nation = await prisma.nation.findFirst({
+          where:{
+            name:data.nation
+          }
+      }) 
+      if(!nation){
+        nation = await prisma.nation.create({
+          data:{
+            
+          }
+        })
+      }
+
+      const newRestaurants = await prisma.restaurant.create({
+        data:{
+          restaurantName:data.restaurantName,
+          ownerFirstName:data.ownerFirstName,
+          ownerLastName:data.ownerLastName,
+          email:data.email,
+          phone:data.phone,
+          latitude:data.latitude,
+          longitude:data.longitude,
+          price:data.price,
+          categoryId:category.id,
+          districtId:district.id,
+          nationId:nationId,
+        }
+      })
+      
+    
+  }
+  catch{
+
+  }
+}
 
 
 const CustomerRegister = async(req,res,next)=>{
