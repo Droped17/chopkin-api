@@ -197,6 +197,34 @@ exports.getEditPending = async (req, res, next) => {
   }
 };
 
+exports.deleteEditPending = async (req, res, next) => {
+  try {
+    const { error, value } = resIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+    const foundPending = await prisma.restaurantPendingEdit.findFirst({
+      where: {
+        id: value.resId,
+      },
+    });
+    if (!foundPending) {
+      next(createError("Restaurant doesn't exist", 404));
+      return;
+    }
+    await prisma.restaurantPendingEdit.delete({
+      where: {
+        id: foundPending.id,
+      },
+    });
+    res.status(200).json({ message: "Pending has been deleted." });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 exports.updateResStatus = async (req, res, next) => {
   try {
     const { error, value } = resIdSchema.validate(req.params);

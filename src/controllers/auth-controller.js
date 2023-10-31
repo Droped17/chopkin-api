@@ -81,7 +81,7 @@ const createAdmin = async (req, res, next) => {
       { expiresIn: process.env.JWT_EXPIRE }
     );
     res.status(200).json({ message: "create admin", accessToken, newAdmin });
-  } catch (error) { }
+  } catch (error) {}
 };
 
 const CreateRestaurants = async (req, res, next) => {

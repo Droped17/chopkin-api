@@ -33,9 +33,9 @@ Table Restaurant {
   phone String [unique, not null]
   password String [not null, default: '1234']
   profileImg String
-  latitude String
-  longitude String
-  price String [not null]
+  latitude Float
+  longitude Float
+  price Int [not null]
   categoryIndex Int [not null]
   districtIndex Int
   nationIndex Int [not null]
