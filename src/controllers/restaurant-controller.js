@@ -128,9 +128,34 @@ exports.editRes = async (req, res, next) => {
     const restaurantData = {
       restaurantName: restaurantName,
       price: price,
+      restaurantId: value.resId,
     };
     if (req.files.profileImg) {
       restaurantData.profileImg = req.files.profileImg[0].path;
+    }
+    if (category) {
+      const foundCat = await prisma.category.findFirst({
+        where: {
+          name: category,
+        },
+      });
+      restaurantData.categoryId = foundCat.id;
+    }
+    if (district) {
+      const foundDis = await prisma.district.findFirst({
+        where: {
+          name: district,
+        },
+      });
+      restaurantData.districtId = foundDis.id;
+    }
+    if (nation) {
+      const foundNation = await prisma.nation.findFirst({
+        where: {
+          name: nation,
+        },
+      });
+      // restaurantData.nationId =
     }
     await prisma.restaurantPendingEdit.create({
       data: restaurantData,
