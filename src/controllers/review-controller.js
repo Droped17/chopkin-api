@@ -1,11 +1,13 @@
 const prisma = require("../models/prisma");
 const fs = require("fs/promises");
+const { upload } = require("../config/cloudinaryService");
+const createError = require("../utils/create-error");
 const { checkReviewIdSchema } = require("../validators/review-validator");
 
 exports.createReview = async (req, res, next) => {
   try {
-    const { message } = req.body;
-    if ((!message || !message.trim()) && !req.file) {
+    const { reviewMessage } = req.body;
+    if ((!reviewMessage || !reviewMessage.trim()) && !req.file) {
       return next(createError("Review or Image is required", 400));
     }
 
@@ -13,8 +15,8 @@ exports.createReview = async (req, res, next) => {
     if (req.file) {
       data.image = await upload(req.file.path);
     }
-    if (message) {
-      data.message = message;
+    if (reviewMessage) {
+      data.reviewMessage = reviewMessage;
     }
     const review = await prisma.review.create({
       data: data,
@@ -35,6 +37,16 @@ exports.createReview = async (req, res, next) => {
         },
       },
     });
+
+    const reviewImage = [];
+    if (req.files) {
+      const image = await prisma.reviewImage.create({
+        data: {
+          reviewId: review.id,
+        },
+      });
+    }
+
     res.status(201).json({ message: "Review created", review });
   } catch (err) {
     next(err);
