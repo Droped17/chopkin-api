@@ -115,6 +115,51 @@ exports.deleteRes = async (req, res, next) => {
 
 exports.editRes = async (req, res, next) => {
   try {
+    const { error, value } = resIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+    if (!req.user.type !== "restaurant") {
+      next(createError("You're unauthorized."));
+      return;
+    }
+    const { restaurantName, price, category, district, nation } = req.body;
+    const restaurantData = {
+      restaurantName: restaurantName,
+      price: price,
+      restaurantId: value.resId,
+    };
+    if (req.files.profileImg) {
+      restaurantData.profileImg = req.files.profileImg[0].path;
+    }
+    if (category) {
+      const foundCat = await prisma.category.findFirst({
+        where: {
+          name: category,
+        },
+      });
+      restaurantData.categoryId = foundCat.id;
+    }
+    if (district) {
+      const foundDis = await prisma.district.findFirst({
+        where: {
+          name: district,
+        },
+      });
+      restaurantData.districtId = foundDis.id;
+    }
+    if (nation) {
+      const foundNation = await prisma.nation.findFirst({
+        where: {
+          name: nation,
+        },
+      });
+      // restaurantData.nationId =
+    }
+    await prisma.restaurantPendingEdit.create({
+      data: restaurantData,
+    });
   } catch (err) {
     next(err);
   }

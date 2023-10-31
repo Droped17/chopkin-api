@@ -37,44 +37,41 @@ model Admin {
 }
 
 model Restaurant {
-  id               String            @id
-  restaurantName   String            @unique
-  ownerFirstName   String
-  ownerLastName    String
-  email            String            @unique
-  phone            String            @unique
-  password         String
-  profileImg       String?
-  latitude         String?
-  longitude        String?
-  price            String
-  categoryId       Int
-  category         Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  districtId       Int?
-  district         District?         @relation(fields: [districtId], references: [id], onDelete: Cascade)
-  nationId         Int
-  nation           Nation            @relation(fields: [nationId], references: [id], onDelete: Cascade)
-  status           Int               @default(0)
-  Bookings         Booking[]
-  Reviews          Review[]
-  RestaurantImages RestaurantImage[]
-  Packages         Package[]
-  BusinessTime     BusinessTime[]
+  id                    String                  @id
+  restaurantName        String                  @unique
+  ownerFirstName        String
+  ownerLastName         String
+  email                 String                  @unique
+  phone                 String                  @unique
+  password              String                  @default("1234")
+  profileImg            String?
+  latitude              String?
+  longitude             String?
+  price                 String
+  categoryIndex         Int
+  districtIndex         Int?
+  nationIndex           Int
+  status                Int                     @default(0)
+  Bookings              Booking[]
+  Reviews               Review[]
+  RestaurantImages      RestaurantImage[]
+  Packages              Package[]
+  BusinessTime          BusinessTime[]
+  RestaurantPendingEdit RestaurantPendingEdit[]
 }
 
 model RestaurantPendingEdit {
-  id             Int       @id @default(autoincrement())
-  restaurantName String    @unique
+  id             Int        @id @default(autoincrement())
+  restaurantName String     @unique
   profileImg     String?
-  latitude       String?
-  longitude      String?
+  latitude       Float?
+  longitude      Float?
   price          String
-  categoryId     Int
-  category       Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  districtId     Int?
-  district       District? @relation(fields: [districtId], references: [id], onDelete: Cascade)
-  nationId       Int
-  nation         Nation    @relation(fields: [nationId], references: [id], onDelete: Cascade)
+  categoryIndex  Int
+  districtIndex  Int?
+  nationIndex    Int
+  restaurant     Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId   String
 }
 
 model RestaurantImage {
@@ -82,27 +79,6 @@ model RestaurantImage {
   url          String
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-}
-
-model Category {
-  id                    Int                     @id @default(autoincrement())
-  name                  String                  @unique
-  Restaurants           Restaurant[]
-  RestaurantPendingEdit RestaurantPendingEdit[]
-}
-
-model District {
-  id                    Int                     @id @default(autoincrement())
-  name                  String
-  Restaurants           Restaurant[]
-  RestaurantPendingEdit RestaurantPendingEdit[]
-}
-
-model Nation {
-  id                    Int                     @id @default(autoincrement())
-  name                  String
-  Restaurants           Restaurant[]
-  RestaurantPendingEdit RestaurantPendingEdit[]
 }
 
 model Package {
@@ -172,6 +148,6 @@ model BusinessTime {
   day          Int
   openTime     String
   closedTime   String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   restaurantId String
 }
