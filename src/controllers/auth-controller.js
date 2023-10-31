@@ -129,13 +129,10 @@ const CreateRestaurants = async (req, res, next) => {
     const payload = { restaurantId: newRestaurants.id };
     const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
 
-    res.status(200).json({
-      message: "create restaurants success",
-      accessToken,
-      newRestaurants,
-    });
-  } catch (error) {
-    next(error);
+    res.status(200).json({message:"create restaurants success",accessToken,newRestaurants});
+  }
+  catch(error){
+    next(error)
   }
 };
 
@@ -186,7 +183,9 @@ const CustomerRegister = async (req, res, next) => {
     console.log(error);
     next(error);
   }
-};
+}
+
+
 
 // exports.register = async (req, res, next) => {
 //   try {
