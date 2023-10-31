@@ -5,5 +5,5 @@ exports.resIdSchema = Joi.object({
 });
 
 exports.resNationSchema = Joi.object({
-  nation: Joi.string().trim().required(),
+  nationIndex: Joi.number().integer().positive().required(),
 });
