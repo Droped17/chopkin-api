@@ -9,15 +9,13 @@ exports.getAllRes = async (req, res, next) => {
         status: 1,
       },
       include: {
-        RestaurantImage: true,
-        category: true,
-        district: true,
-        nation: true,
-        Review: true,
+        Reviews: true,
+        BusinessTime: true,
       },
     });
     res.status(200).json(restaurants);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -35,17 +33,16 @@ exports.getResById = async (req, res, next) => {
         status: 1,
       },
       include: {
-        category: true,
-        district: true,
-        nation: true,
-        Review: true,
+        Bookings: true,
+        Reviews: true,
         RestaurantImages: true,
         Packages: true,
-        BusinessTimes: true,
+        BusinessTime: true,
       },
     });
     res.status(200).json(restaurant);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -57,24 +54,18 @@ exports.getResByNation = async (req, res, next) => {
       next(error);
       return;
     }
-    const resByNation = await prisma.nation.findMany({
+    const resByNation = await prisma.restaurant.findMany({
       where: {
-        name: value.nation,
+        nationIndex: value.nationIndex,
       },
       include: {
-        Restaurants: {
-          include: {
-            RestaurantImage: true,
-            category: true,
-            district: true,
-            nation: true,
-            Review: true,
-          },
-        },
+        Reviews: true,
+        BusinessTime: true,
       },
     });
     res.status(200).json(resByNation);
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -82,6 +73,7 @@ exports.getResByNation = async (req, res, next) => {
 exports.createRes = async (req, res, next) => {
   try {
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -109,6 +101,7 @@ exports.deleteRes = async (req, res, next) => {
     });
     res.status(200).json({ message: "deleted successfully" });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
@@ -124,43 +117,84 @@ exports.editRes = async (req, res, next) => {
       next(createError("You're unauthorized."));
       return;
     }
-    const { restaurantName, price, category, district, nation } = req.body;
-    const restaurantData = {
+    const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
+      req.body;
+    const data = {
       restaurantName: restaurantName,
       price: price,
       restaurantId: value.resId,
+      categoryIndex: categoryIndex,
+      districtIndex: districtIndex,
+      nationIndex: nationIndex,
     };
     if (req.files.profileImg) {
-      restaurantData.profileImg = req.files.profileImg[0].path;
-    }
-    if (category) {
-      const foundCat = await prisma.category.findFirst({
-        where: {
-          name: category,
-        },
-      });
-      restaurantData.categoryId = foundCat.id;
-    }
-    if (district) {
-      const foundDis = await prisma.district.findFirst({
-        where: {
-          name: district,
-        },
-      });
-      restaurantData.districtId = foundDis.id;
-    }
-    if (nation) {
-      const foundNation = await prisma.nation.findFirst({
-        where: {
-          name: nation,
-        },
-      });
-      // restaurantData.nationId =
+      data.profileImg = req.files.profileImg[0].path;
     }
     await prisma.restaurantPendingEdit.create({
-      data: restaurantData,
+      data: data,
     });
+    if (req.files.resImg) {
+      for (let x of req.files.resImg) {
+        await prisma.restaurantImage.create({
+          data: {
+            url: x[0].path,
+            restaurantId: value.resId,
+          },
+        });
+      }
+    }
+    res.json(201).json({ message: "Edit pending has been created" });
   } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+exports.updateResStatus = async (req, res, next) => {
+  try {
+    const { error, value } = resIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+    const foundRes = await prisma.restaurant.findFirst({
+      where: {
+        id: value.resId,
+      },
+    });
+    if (!foundRes) {
+      next(createError("Restaurant doesn't exist", 404));
+      return;
+    }
+    if (foundRes.status === 0) {
+      await prisma.restaurant.update({
+        data: {
+          status: 1,
+        },
+        where: {
+          id: value.resId,
+        },
+      });
+      res
+        .status(200)
+        .json({ message: "Restaurant is now shown on the website." });
+      return;
+    }
+    if (foundRes.status === 0) {
+      await prisma.restaurant.update({
+        data: {
+          status: 0,
+        },
+        where: {
+          id: value.resId,
+        },
+      });
+      res
+        .status(200)
+        .json({ message: "Restaurant is now hidden on the website." });
+    }
+  } catch (err) {
+    console.log(err);
     next(err);
   }
 };

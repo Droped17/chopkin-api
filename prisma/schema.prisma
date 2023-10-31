@@ -15,7 +15,7 @@ datasource db {
 }
 
 model Customer {
-  id          String     @id
+  id          String     @id @default(uuid())
   firstName   String
   lastName    String
   profileImg  String?
@@ -37,7 +37,7 @@ model Admin {
 }
 
 model Restaurant {
-  id                    String                  @id
+  id                    String                  @id @default(uuid())
   restaurantName        String                  @unique
   ownerFirstName        String
   ownerLastName         String
@@ -92,7 +92,7 @@ model Package {
 }
 
 model Booking {
-  id            String     @id
+  id            String     @id @default(uuid())
   customerId    String
   customer      Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
   restaurantId  String
