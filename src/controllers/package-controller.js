@@ -11,3 +11,12 @@ exports.createPackage = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getPackages = async (req, res, next) => {
+  try {
+    const packages = await prisma.package.findMany();
+    res.status(200).json(packages);
+  } catch (err) {
+    next(err);
+  }
+};

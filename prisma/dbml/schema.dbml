@@ -31,22 +31,35 @@ Table Restaurant {
   ownerLastName String [not null]
   email String [unique, not null]
   phone String [unique, not null]
-  password String [not null]
+  password String [not null, default: '1234']
   profileImg String
-  googleAddress String [not null]
+  latitude String
+  longitude String
   price String [not null]
-  categoryId Int [not null]
-  category Category [not null]
-  districtId Int [not null]
-  district District [not null]
-  nationId Int [not null]
-  nation Nation [not null]
+  categoryIndex Int [not null]
+  districtIndex Int
+  nationIndex Int [not null]
   status Int [not null, default: 0]
   Bookings Booking [not null]
   Reviews Review [not null]
   RestaurantImages RestaurantImage [not null]
   Packages Package [not null]
-  BusinessTimes BusinessTime [not null]
+  BusinessTime BusinessTime [not null]
+  RestaurantPendingEdit RestaurantPendingEdit [not null]
+}
+
+Table RestaurantPendingEdit {
+  id Int [pk, increment]
+  restaurantName String [unique, not null]
+  profileImg String
+  latitude Float
+  longitude Float
+  price String [not null]
+  categoryIndex Int [not null]
+  districtIndex Int
+  nationIndex Int [not null]
+  restaurant Restaurant [not null]
+  restaurantId String [not null]
 }
 
 Table RestaurantImage {
@@ -54,24 +67,6 @@ Table RestaurantImage {
   url String [not null]
   restaurantId String [not null]
   restaurant Restaurant [not null]
-}
-
-Table Category {
-  id Int [pk, increment]
-  name String [unique, not null]
-  Restaurants Restaurant [not null]
-}
-
-Table District {
-  id Int [pk, increment]
-  name String [not null]
-  Restaurants Restaurant [not null]
-}
-
-Table Nation {
-  id Int [pk, increment]
-  name String [not null]
-  Restaurants Restaurant [not null]
 }
 
 Table Package {
@@ -82,7 +77,6 @@ Table Package {
   img String
   restaurantId String [not null]
   restaurant Restaurant [not null]
-  BusinessTimes BusinessTime [not null]
 }
 
 Table Booking {
@@ -95,7 +89,8 @@ Table Booking {
   payment Payment [not null]
   paymentId String [not null]
   totalCustomer Int [not null]
-  totalKid Int [not null]
+  totalKid Int [not null, default: 0]
+  specialRequest String
   createdAt DateTime [default: `now()`, not null]
   bookingTime DateTime [not null]
   ChatRooms ChatRoom [not null]
@@ -142,40 +137,32 @@ Table BusinessTime {
   day Int [not null]
   openTime String [not null]
   closedTime String [not null]
-  package Package [not null]
-  packageId Int [not null]
   restaurant Restaurant [not null]
   restaurantId String [not null]
 }
 
-Ref: Restaurant.categoryId > Category.id
+Ref: RestaurantPendingEdit.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: Restaurant.districtId > District.id
+Ref: RestaurantImage.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: Restaurant.nationId > Nation.id
+Ref: Package.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: RestaurantImage.restaurantId > Restaurant.id
+Ref: Booking.customerId > Customer.id [delete: Cascade]
 
-Ref: Package.restaurantId > Restaurant.id
+Ref: Booking.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: Booking.customerId > Customer.id
+Ref: Booking.paymentId > Payment.id [delete: Cascade]
 
-Ref: Booking.restaurantId > Restaurant.id
+Ref: Review.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: Booking.paymentId > Payment.id
+Ref: Review.customerId > Customer.id [delete: Cascade]
 
-Ref: Review.restaurantId > Restaurant.id
+Ref: ReviewImage.reviewId > Review.id [delete: Cascade]
 
-Ref: Review.customerId > Customer.id
+Ref: ChatRoom.adminId > Admin.id [delete: Cascade]
 
-Ref: ReviewImage.reviewId > Review.id
+Ref: ChatRoom.customerId > Customer.id [delete: Cascade]
 
-Ref: ChatRoom.adminId > Admin.id
+Ref: ChatRoom.bookingId > Booking.id [delete: Cascade]
 
-Ref: ChatRoom.customerId > Customer.id
-
-Ref: ChatRoom.bookingId > Booking.id
-
-Ref: BusinessTime.packageId > Package.id
-
-Ref: BusinessTime.restaurantId > Restaurant.id
+Ref: BusinessTime.restaurantId > Restaurant.id [delete: Cascade]
