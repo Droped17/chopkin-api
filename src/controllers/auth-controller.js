@@ -4,6 +4,106 @@ const { registerSchema, loginSchema } = require("../validators/auth-validator");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
 
+
+// model Customer {
+//   id          String     @id
+//   firstName   String
+//   lastName    String
+//   profileImg  String?
+//   memberPoint Int
+//   email       String     @unique
+//   phone       String     @unique
+//   password    String
+//   Bookings    Booking[]
+//   Reviews     Review[]
+//   ChatRooms   ChatRoom[]
+// }
+
+// model Admin {
+//   id        String     @id
+//   isAdmin   Int        @default(1)
+//   email     String     @unique
+//   password  String
+//   ChatRooms ChatRoom[]
+// }
+
+// model Restaurant {
+//   id               String            @id
+//   restaurantName   String            @unique
+//   ownerFirstName   String
+//   ownerLastName    String
+//   email            String            @unique
+//   phone            String            @unique
+//   password         String
+//   profileImg       String?
+//   latitude         String?
+//   longitude        String?
+//   price            String
+//   categoryId       Int
+//   category         Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+//   districtId       Int?
+//   district         District?         @relation(fields: [districtId], references: [id], onDelete: Cascade)
+//   nationId         Int
+//   nation           Nation            @relation(fields: [nationId], references: [id], onDelete: Cascade)
+//   status           Int               @default(0)
+//   businessTime     BusinessTime      @relation(fields: [businessTimeId], references: [id])
+//   businessTimeId   Int
+//   Bookings         Booking[]
+//   Reviews          Review[]
+//   RestaurantImages RestaurantImage[]
+//   Packages         Package[]
+// }
+
+
+// model Category {
+//   id                    Int                     @id @default(autoincrement())
+//   name                  String                  @unique
+//   Restaurants           Restaurant[]
+//   RestaurantPendingEdit RestaurantPendingEdit[]
+// }
+
+// model District {
+//   id                    Int                     @id @default(autoincrement())
+//   name                  String
+//   Restaurants           Restaurant[]
+//   RestaurantPendingEdit RestaurantPendingEdit[]
+// }
+
+
+//   firstName   String
+//   lastName    String
+//   profileImg  String?
+//   memberPoint Int
+//   email       String     @unique
+//   phone       String     @unique
+//   password    String
+
+
+const CustomerRegister = async(req,res,next)=>{
+  try
+  {
+      const { value, error } = registerSchema.validate(req.body);
+      if(error)
+      {
+        next(error);
+      }
+      //create 
+      value.password = await bcrypt.hash(value.password,12);
+      const customer = await prisma.customer.create({
+          data:{
+            firstName:value.firstName,
+            lastName:value.lastName,
+            memberPoint:0,
+            email,
+            phone
+          }
+      })
+  }
+  catch(error){
+    next(error);
+  }
+}
+
 exports.register = async (req, res, next) => {
   try {
     const { value, error } = registerSchema.validate(req.body);
