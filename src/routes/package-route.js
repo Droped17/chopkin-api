@@ -4,6 +4,7 @@ const router = express.Router();
 
 const packageController = require("../controllers/package-controller");
 
-router.post("/create", upload.single(), packageController.createPackage);
+router.post("/create", upload.single("image"), packageController.createPackage);
+router.get("/", packageController.getPackageByRes);
 
 module.exports = router;
