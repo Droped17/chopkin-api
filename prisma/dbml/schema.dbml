@@ -89,7 +89,8 @@ Table Booking {
   payment Payment [not null]
   paymentId String [not null]
   totalCustomer Int [not null]
-  totalKid Int [not null]
+  totalKid Int [not null, default: 0]
+  specialRequest String
   createdAt DateTime [default: `now()`, not null]
   bookingTime DateTime [not null]
   ChatRooms ChatRoom [not null]

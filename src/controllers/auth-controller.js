@@ -4,7 +4,6 @@ const { registerSchema, loginSchema } = require("../validators/auth-validator");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
 
-
 // model Customer {
 //   id          String     @id
 //   firstName   String
@@ -51,112 +50,143 @@ const createError = require("../utils/create-error");
 //   RestaurantPendingEdit RestaurantPendingEdit[]
 // }
 
-
 //check Param
-const register = async(req,res,next)=>{
-  try{
-    const {usertype} = req.params;
-    console.log(req.params)
-    if(usertype=="customer") CustomerRegister(req,res,next);
-    else if(usertype == "restaurant") CreateRestaurants(req,res,next);
-  }
-  catch(error){
+const register = async (req, res, next) => {
+  try {
+    const { usertype } = req.params;
+    console.log(req.params);
+    if (usertype == "customer") CustomerRegister(req, res, next);
+    else if (usertype == "restaurant") CreateRestaurants(req, res, next);
+  } catch (error) {
     next(error);
   }
-
-}
-const createAdmin = async(req,res,next)=>{
-  try{
+};
+const createAdmin = async (req, res, next) => {
+  try {
     //validate
 
     //validate
-    const adminData = req.body
+
+    const adminData = req.body;
     const newAdmin = await prisma.admin.create({
-        data:{
-          email:adminData.email,
-          password:adminData.password
-        }  
+      data: {
+        email: adminData.email,
+        password: adminData.password,
+      },
     });
-    const payload = {adminId:newAdmin.id};
-    const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY||"8JncnNqEPncnca7ranc47anda",{expiresIn:process.env.JWT_EXPIRE});
-    res.status(200).json({message:"create admin",accessToken,newAdmin});
-  }
-  catch(error){
+    const payload = { adminId: newAdmin.id };
+    const accessToken = jwt.sign(
+      payload,
+      process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
+    res.status(200).json({ message: "create admin", accessToken, newAdmin });
+  } catch (error) { }
+};
 
-  }
-}
+const CreateRestaurants = async (req, res, next) => {
+  try {
+    //validate
 
-const CreateRestaurants = async(req,res,next)=>{
-  try{
-      
-      //validate
-
-      //validate
-      const data = req.body;
-
-      const newRestaurants = await prisma.restaurant.create({
-        data:{
-          restaurantName:data.restaurantName,
-          ownerFirstName:data.ownerFirstName,
-          ownerLastName:data.ownerLastName,
-          email:data.email,
-          phone:data.phone,
-          latitude:data.latitude,
-          longitude:data.longitude,
-          price:data.price,
-          categoryIndex:data.categoryIndex,
-          districtIndex:data.districtIndex,
-          nationIndex:data.nationIndex,
-        }
-      });
-      
-      const payload = {restaurantId:newRestaurants.id};
-      const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY||"8JncnNqEPncnca7ranc47anda",{expiresIn:process.env.JWT_EXPIRE});
-
-    res.status(200).json({message:"create restaurants success",accessToken,newRestaurants});
-  }
-  catch(error){
-    next(error)
-  }
-}
-
-
-const CustomerRegister = async(req,res,next)=>{
-  try
-  {
-      const { value, error } = registerSchema.validate(req.body);
-      console.log(value);
-      if(error)
-      {
-        return next(error);
+    //validate
+    const data = req.body;
+    if(data.password!= data.confirmPassword){
+      return next(createError("password not match", 400));
+    }
+    const checkRestaurants = await prisma.restaurant.findFirst({
+      where: {
+        OR: [{ email: data.email }, { phone: data.phone }],
       }
-      //hash password
-      value.password = await bcrypt.hash(value.password,12);
-      //create 
-      const customer = await prisma.customer.create({
-          data:{
-            firstName:value.firstName,
-            lastName:value.lastName,
-            password:value.password,
-            memberPoint:0,
-            email:value.email,
-            phone:value.phone
-          }
-      });
+    });
+    const checkCustomer = await prisma.customer.findFirst({
+      where: {
+        OR: [{ email: data.email }, { phone: data.phone }],
+      }
+    });
 
-      const payload = {customerId:customer.id};
-      //accessToken
-      const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY||"8JncnNqEPncnca7ranc47anda",{expiresIn:process.env.JWT_EXPIRE});
-      
-      delete customer.password;
-      res.status(200).json({message:"Create customer success",accessToken,customer})
-  }
-  catch(error){
+    if (checkRestaurants || checkCustomer) {
+      return next(createError("have this email and password", 400));
+    }
+
+    const newRestaurants = await prisma.restaurant.create({
+      data: {
+        restaurantName: data.restaurantName,
+        ownerFirstName: data.ownerFirstName,
+        ownerLastName: data.ownerLastName,
+        email: data.email,
+        phone: data.phone,
+        latitude: +data.latitude,
+        longitude: +data.longitude,
+        price: +data.price,
+        password:data.password,
+        categoryIndex: data.categoryIndex,
+        districtIndex: data.districtIndex,
+        nationIndex: data.nationIndex,
+      },
+    });
+    
+
+    const payload = { restaurantId: newRestaurants.id };
+    const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+
+    res.status(200).json({
+      message: "create restaurants success",
+      accessToken,
+      newRestaurants,
+    });
+  } catch (error) {
     next(error);
   }
-}
+};
 
+const CustomerRegister = async (req, res, next) => {
+  try {
+    const { value, error } = registerSchema.validate(req.body);
+    if (error) {
+      next(error);
+      return;
+    }
+    const checkRestaurants = await prisma.restaurant.findFirst({
+      where: {
+        OR: [{ email: data.email }, { phone: data.phone }],
+      }
+    });
+    const checkCustomer = await prisma.customer.findFirst({
+      where: {
+        OR: [{ email: data.email }, { phone: data.phone }],
+      }
+    });
 
+    if (checkRestaurants || checkCustomer) {
+      return next(createError("have this email and password", 400));
+    }
+
+    //hash password
+    value.password = await bcrypt.hash(value.password, 12);
+
+    //create
+    const customer = await prisma.customer.create({
+      data: {
+        firstName: value.firstName,
+        lastName: value.lastName,
+        // memberPoint: 0,
+        email: value.email,
+        phone: value.phone,
+        password: value.password,
+      },
+    });
+
+    const payload = { customerId: customer.id };
+    //accessToken
+    const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+
+    delete customer.password;
+    res.status(200).json({ message: "Create customer success", accessToken, customer });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
 
 // exports.register = async (req, res, next) => {
 //   try {
@@ -211,7 +241,6 @@ const CustomerRegister = async(req,res,next)=>{
 //     next(err);
 //   }
 // };
-
 
 exports.register = register;
 exports.createAdmin = createAdmin;

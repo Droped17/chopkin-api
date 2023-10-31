@@ -7,3 +7,7 @@ exports.resIdSchema = Joi.object({
 exports.resNationSchema = Joi.object({
   nationIndex: Joi.number().integer().positive().required(),
 });
+
+exports.resCatSchema = Joi.object({
+  catIndex: Joi.number().integer().positive().required(),
+});

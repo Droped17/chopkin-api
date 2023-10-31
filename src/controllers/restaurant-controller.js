@@ -1,6 +1,10 @@
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
-const { resIdSchema, resNationSchema } = require("../validators/res-validator");
+const {
+  resIdSchema,
+  resNationSchema,
+  resCatSchema,
+} = require("../validators/res-validator");
 
 exports.getAllRes = async (req, res, next) => {
   try {
@@ -47,6 +51,20 @@ exports.getResById = async (req, res, next) => {
   }
 };
 
+exports.getPendingRes = async (req, res, next) => {
+  try {
+    const pendingRes = await prisma.restaurant.findMany({
+      where: {
+        status: 0,
+      },
+    });
+    res.status(200).json(pendingRes);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
 exports.getResByNation = async (req, res, next) => {
   try {
     const { error, value } = resNationSchema.validate(req.params);
@@ -64,6 +82,25 @@ exports.getResByNation = async (req, res, next) => {
       },
     });
     res.status(200).json(resByNation);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+exports.getResByCat = async (req, res, next) => {
+  try {
+    const { error, value } = resCatSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+    const resByCat = await prisma.restaurant.findMany({
+      where: {
+        categoryIndex: value.catIndex,
+      },
+    });
+    res.status(200).json(resByCat);
   } catch (err) {
     console.log(err);
     next(err);
@@ -144,6 +181,16 @@ exports.editRes = async (req, res, next) => {
       }
     }
     res.json(201).json({ message: "Edit pending has been created" });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+exports.getEditPending = async (req, res, next) => {
+  try {
+    const pendingEdit = await prisma.restaurantPendingEdit.findMany();
+    res.status(200).json(pendingEdit);
   } catch (err) {
     console.log(err);
     next(err);

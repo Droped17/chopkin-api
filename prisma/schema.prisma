@@ -92,19 +92,20 @@ model Package {
 }
 
 model Booking {
-  id            String     @id @default(uuid())
-  customerId    String
-  customer      Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  restaurantId  String
-  restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  orderStatus   Int        @default(0)
-  payment       Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
-  paymentId     String
-  totalCustomer Int
-  totalKid      Int
-  createdAt     DateTime   @default(now())
-  bookingTime   DateTime
-  ChatRooms     ChatRoom[]
+  id             String     @id @default(uuid())
+  customerId     String
+  customer       Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  restaurantId   String
+  restaurant     Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orderStatus    Int        @default(0)
+  payment        Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  paymentId      String
+  totalCustomer  Int
+  totalKid       Int        @default(0)
+  specialRequest String?
+  createdAt      DateTime   @default(now())
+  bookingTime    DateTime
+  ChatRooms      ChatRoom[]
 }
 
 model Payment {
