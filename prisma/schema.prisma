@@ -45,14 +45,15 @@ model Restaurant {
   phone            String            @unique
   password         String
   profileImg       String?
-  googleAddress    String
+  latitude         String?
+  longitude        String?
   price            String
   categoryId       Int
-  category         Category          @relation(fields: [categoryId], references: [id],onDelete: Cascade)
-  districtId       Int
-  district         District          @relation(fields: [districtId], references: [id],onDelete: Cascade)
+  category         Category          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  districtId       Int?
+  district         District?         @relation(fields: [districtId], references: [id], onDelete: Cascade)
   nationId         Int
-  nation           Nation            @relation(fields: [nationId], references: [id],onDelete: Cascade)
+  nation           Nation            @relation(fields: [nationId], references: [id], onDelete: Cascade)
   status           Int               @default(0)
   Bookings         Booking[]
   Reviews          Review[]
@@ -65,7 +66,7 @@ model RestaurantImage {
   id           Int        @id @default(autoincrement())
   url          String
   restaurantId String
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
 model Category {
@@ -93,18 +94,18 @@ model Package {
   price         Int
   img           String?
   restaurantId  String
-  restaurant    Restaurant     @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant    Restaurant     @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   BusinessTimes BusinessTime[]
 }
 
 model Booking {
   id            String     @id
   customerId    String
-  customer      Customer   @relation(fields: [customerId], references: [id],onDelete: Cascade)
+  customer      Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
   restaurantId  String
-  restaurant    Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   orderStatus   Int        @default(0)
-  payment       Payment    @relation(fields: [paymentId], references: [id],onDelete: Cascade)
+  payment       Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   paymentId     String
   totalCustomer Int
   totalKid      Int
@@ -122,9 +123,9 @@ model Payment {
 model Review {
   id           Int           @id @default(autoincrement())
   restaurantId String
-  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   reviewerId   String
-  customer     Customer      @relation(fields: [customerId], references: [id],onDelete: Cascade)
+  customer     Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
   isAnonymous  Int           @default(0)
   score        Float
   ReviewImages ReviewImage[]
@@ -135,18 +136,18 @@ model ReviewImage {
   id       Int    @id @default(autoincrement())
   url      String
   reviewId Int
-  review   Review @relation(fields: [reviewId], references: [id],onDelete: Cascade)
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 }
 
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomIdBySocket String
   adminId        String?
-  admin          Admin?   @relation(fields: [adminId], references: [id],onDelete: Cascade)
+  admin          Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
   customerId     String
-  customer       Customer @relation(fields: [customerId], references: [id],onDelete: Cascade)
+  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   bookingId      String?
-  booking        Booking? @relation(fields: [bookingId], references: [id],onDelete: Cascade)
+  booking        Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 model BusinessTime {
@@ -154,8 +155,8 @@ model BusinessTime {
   day          Int
   openTime     String
   closedTime   String
-  package      Package    @relation(fields: [packageId], references: [id],onDelete: Cascade)
+  package      Package    @relation(fields: [packageId], references: [id], onDelete: Cascade)
   packageId    Int
-  restaurant   Restaurant @relation(fields: [restaurantId], references: [id],onDelete: Cascade)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   restaurantId String
 }
