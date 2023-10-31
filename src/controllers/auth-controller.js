@@ -125,9 +125,10 @@ const CustomerRegister = async(req,res,next)=>{
   try
   {
       const { value, error } = registerSchema.validate(req.body);
+      console.log(value);
       if(error)
       {
-        next(error);
+        return next(error);
       }
       //hash password
       value.password = await bcrypt.hash(value.password,12);
@@ -136,6 +137,7 @@ const CustomerRegister = async(req,res,next)=>{
           data:{
             firstName:value.firstName,
             lastName:value.lastName,
+            password:value.password,
             memberPoint:0,
             email:value.email,
             phone:value.phone
