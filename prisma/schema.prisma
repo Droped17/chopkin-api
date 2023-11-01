@@ -19,7 +19,7 @@ model Customer {
   firstName   String
   lastName    String
   profileImg  String?
-  memberPoint Int
+  memberPoint Int        @default(0)
   email       String     @unique
   phone       String     @unique
   password    String
@@ -37,27 +37,28 @@ model Admin {
 }
 
 model Restaurant {
-  id                    String                  @id @default(uuid())
-  restaurantName        String                  @unique
-  ownerFirstName        String
-  ownerLastName         String
-  email                 String                  @unique
-  phone                 String                  @unique
-  password              String                  @default("1234")
-  profileImg            String?
-  latitude              Float?
-  longitude             Float?
-  price                 Int
-  categoryIndex         Int
-  districtIndex         Int?
-  nationIndex           Int
-  status                Int                     @default(0)
-  Bookings              Booking[]
-  Reviews               Review[]
-  RestaurantImages      RestaurantImage[]
-  Packages              Package[]
-  BusinessTime          BusinessTime[]
-  RestaurantPendingEdit RestaurantPendingEdit[]
+  id                     String                  @id @default(uuid())
+  restaurantName         String                  @unique
+  ownerFirstName         String
+  ownerLastName          String
+  email                  String                  @unique
+  phone                  String                  @unique
+  password               String                  @default("1234")
+  profileImg             String?
+  latitude               Float?
+  longitude              Float?
+  price                  Int
+  categoryIndex          Int
+  districtIndex          Int?
+  nationIndex            Int
+  status                 Int                     @default(0)
+  Bookings               Booking[]
+  Reviews                Review[]
+  RestaurantImages       RestaurantImage[]
+  Packages               Package[]
+  BusinessTimes          BusinessTime[]
+  RestaurantPendingEdits RestaurantPendingEdit[]
+  PackageEditPendings    PackageEditPending[]
 }
 
 model RestaurantPendingEdit {
@@ -91,6 +92,16 @@ model Package {
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 }
 
+model PackageEditPending {
+  id           Int        @id @default(autoincrement())
+  name         String
+  detail       String
+  price        Int
+  img          String?
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+}
+
 model Booking {
   id             String     @id @default(uuid())
   customerId     String
@@ -111,11 +122,12 @@ model Booking {
 model Payment {
   id            String    @id @default(uuid())
   paymentStatus Int       @default(1)
-  Booking       Booking[]
+  Bookings      Booking[]
 }
 
 model Review {
   id           Int           @id @default(autoincrement())
+  message      String
   restaurantId String
   restaurant   Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   reviewerId   String

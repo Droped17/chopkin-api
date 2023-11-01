@@ -7,7 +7,7 @@ Table Customer {
   firstName String [not null]
   lastName String [not null]
   profileImg String
-  memberPoint Int [not null]
+  memberPoint Int [not null, default: 0]
   email String [unique, not null]
   phone String [unique, not null]
   password String [not null]
@@ -44,8 +44,9 @@ Table Restaurant {
   Reviews Review [not null]
   RestaurantImages RestaurantImage [not null]
   Packages Package [not null]
-  BusinessTime BusinessTime [not null]
-  RestaurantPendingEdit RestaurantPendingEdit [not null]
+  BusinessTimes BusinessTime [not null]
+  RestaurantPendingEdits RestaurantPendingEdit [not null]
+  PackageEditPendings PackageEditPending [not null]
 }
 
 Table RestaurantPendingEdit {
@@ -79,6 +80,16 @@ Table Package {
   restaurant Restaurant [not null]
 }
 
+Table PackageEditPending {
+  id Int [pk, increment]
+  name String [not null]
+  detail String [not null]
+  price Int [not null]
+  img String
+  restaurantId String [not null]
+  restaurant Restaurant [not null]
+}
+
 Table Booking {
   id String [pk]
   customerId String [not null]
@@ -99,11 +110,12 @@ Table Booking {
 Table Payment {
   id String [pk]
   paymentStatus Int [not null, default: 1]
-  Booking Booking [not null]
+  Bookings Booking [not null]
 }
 
 Table Review {
   id Int [pk, increment]
+  message String [not null]
   restaurantId String [not null]
   restaurant Restaurant [not null]
   reviewerId String [not null]
@@ -146,6 +158,8 @@ Ref: RestaurantPendingEdit.restaurantId > Restaurant.id [delete: Cascade]
 Ref: RestaurantImage.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Package.restaurantId > Restaurant.id [delete: Cascade]
+
+Ref: PackageEditPending.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Booking.customerId > Customer.id [delete: Cascade]
 
