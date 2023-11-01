@@ -51,19 +51,24 @@ exports.getPackageByRes = async (req, res, next) => {
 };
 
 exports.createPackageEditPending = async (req, res, next) => {
-  const { name, detail, price } = req.body;
-  const data = {
-    name: name,
-    detail: detail,
-    price: price,
-    restaurantId: req.user.id,
-  };
-  if (req.file) {
-    const url = await upload(req.file[0].path);
-    data.img = url;
+  try {
+    const { name, detail, price } = req.body;
+    const data = {
+      name: name,
+      detail: detail,
+      price: price,
+      restaurantId: req.user.id,
+    };
+    if (req.file) {
+      const url = await upload(req.file[0].path);
+      data.img = url;
+    }
+    const edit = await prisma.packageEditPending.create({
+      data: data,
+    });
+    res.status(201).json(edit);
+  } catch {
+    next(err);
+  } finally {
   }
-  const edit = await prisma.packageEditPending.create({
-    data: data,
-  });
-  res.status(201).json(edit);
 };
