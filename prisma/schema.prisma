@@ -132,12 +132,11 @@ model Review {
   createAt     DateTime      @default(now())
   restaurantId String
   restaurant   Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  reviewerId   String
   customer     Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customerId   String
   isAnonymous  Int           @default(0)
   score        Float
   ReviewImages ReviewImage[]
-  customerId   String
 }
 
 model ReviewImage {

@@ -120,12 +120,11 @@ Table Review {
   createAt DateTime [default: `now()`, not null]
   restaurantId String [not null]
   restaurant Restaurant [not null]
-  reviewerId String [not null]
   customer Customer [not null]
+  customerId String [not null]
   isAnonymous Int [not null, default: 0]
   score Float [not null]
   ReviewImages ReviewImage [not null]
-  customerId String [not null]
 }
 
 Table ReviewImage {
