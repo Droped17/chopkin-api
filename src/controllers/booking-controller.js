@@ -1,4 +1,3 @@
-const { error } = require("console");
 const prisma = require("../models/prisma");
 // model Booking {
 //     id            String     @id

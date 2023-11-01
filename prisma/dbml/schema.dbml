@@ -5,9 +5,9 @@
 Table Customer {
   id String [pk]
   firstName String [not null]
-  lastName String [not null]
+  lastName String
   profileImg String
-  memberPoint Int [not null]
+  memberPoint Int [not null, default: 0]
   email String [unique, not null]
   phone String [unique, not null]
   password String [not null]
@@ -33,9 +33,9 @@ Table Restaurant {
   phone String [unique, not null]
   password String [not null, default: '1234']
   profileImg String
-  latitude String
-  longitude String
-  price String [not null]
+  latitude Float
+  longitude Float
+  price Int [not null]
   categoryIndex Int [not null]
   districtIndex Int
   nationIndex Int [not null]
@@ -44,8 +44,9 @@ Table Restaurant {
   Reviews Review [not null]
   RestaurantImages RestaurantImage [not null]
   Packages Package [not null]
-  BusinessTime BusinessTime [not null]
-  RestaurantPendingEdit RestaurantPendingEdit [not null]
+  BusinessTimes BusinessTime [not null]
+  RestaurantPendingEdits RestaurantPendingEdit [not null]
+  PackageEditPendings PackageEditPending [not null]
 }
 
 Table RestaurantPendingEdit {
@@ -54,7 +55,7 @@ Table RestaurantPendingEdit {
   profileImg String
   latitude Float
   longitude Float
-  price String [not null]
+  price Int [not null]
   categoryIndex Int [not null]
   districtIndex Int
   nationIndex Int [not null]
@@ -79,6 +80,16 @@ Table Package {
   restaurant Restaurant [not null]
 }
 
+Table PackageEditPending {
+  id Int [pk, increment]
+  name String [not null]
+  detail String [not null]
+  price Int [not null]
+  img String
+  restaurantId String [not null]
+  restaurant Restaurant [not null]
+}
+
 Table Booking {
   id String [pk]
   customerId String [not null]
@@ -92,18 +103,21 @@ Table Booking {
   totalKid Int [not null, default: 0]
   specialRequest String
   createdAt DateTime [default: `now()`, not null]
-  bookingTime DateTime [not null]
+  bookingDate String [not null]
+  bookingTime String [not null]
   ChatRooms ChatRoom [not null]
 }
 
 Table Payment {
   id String [pk]
   paymentStatus Int [not null, default: 1]
-  Booking Booking [not null]
+  Bookings Booking [not null]
 }
 
 Table Review {
   id Int [pk, increment]
+  message String [not null]
+  createAt DateTime [default: `now()`, not null]
   restaurantId String [not null]
   restaurant Restaurant [not null]
   reviewerId String [not null]
@@ -146,6 +160,8 @@ Ref: RestaurantPendingEdit.restaurantId > Restaurant.id [delete: Cascade]
 Ref: RestaurantImage.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Package.restaurantId > Restaurant.id [delete: Cascade]
+
+Ref: PackageEditPending.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Booking.customerId > Customer.id [delete: Cascade]
 

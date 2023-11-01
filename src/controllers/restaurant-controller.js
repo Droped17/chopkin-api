@@ -1,5 +1,7 @@
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
+const fs = require("fs/promises");
+const { upload } = require("../config/cloudinaryService");
 const {
   resIdSchema,
   resNationSchema,
@@ -107,14 +109,6 @@ exports.getResByCat = async (req, res, next) => {
   }
 };
 
-exports.createRes = async (req, res, next) => {
-  try {
-  } catch (err) {
-    console.log(err);
-    next(err);
-  }
-};
-
 exports.deleteRes = async (req, res, next) => {
   try {
     const { error, value } = resIdSchema.validate(req.params);
@@ -143,15 +137,11 @@ exports.deleteRes = async (req, res, next) => {
   }
 };
 
-exports.editRes = async (req, res, next) => {
+exports.createEditPending = async (req, res, next) => {
   try {
     const { error, value } = resIdSchema.validate(req.params);
     if (error) {
       next(error);
-      return;
-    }
-    if (!req.user.type !== "restaurant") {
-      next(createError("You're unauthorized."));
       return;
     }
     const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
@@ -165,16 +155,18 @@ exports.editRes = async (req, res, next) => {
       nationIndex: nationIndex,
     };
     if (req.files.profileImg) {
-      data.profileImg = req.files.profileImg[0].path;
+      const url = await upload(req.files.profileImg[0].path);
+      data.profileImg = url;
     }
     await prisma.restaurantPendingEdit.create({
       data: data,
     });
-    if (req.files.resImg) {
-      for (let x of req.files.resImg) {
+    if (req.files.image) {
+      for (let x of req.files.image) {
+        const images = await upload(x[0].path);
         await prisma.restaurantImage.create({
           data: {
-            url: x[0].path,
+            url: images,
             restaurantId: value.resId,
           },
         });
@@ -184,13 +176,47 @@ exports.editRes = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     next(err);
+  } finally {
+    for (let x of req.files.image) {
+      fs.unlink(x[0].path);
+    }
   }
 };
 
 exports.getEditPending = async (req, res, next) => {
   try {
-    const pendingEdit = await prisma.restaurantPendingEdit.findMany();
+    const pendingEdit = await prisma.restaurant.findMany({
+      include: RestaurantPendingEdits,
+    });
     res.status(200).json(pendingEdit);
+  } catch (err) {
+    console.log(err);
+    next(err);
+  }
+};
+
+exports.deleteEditPending = async (req, res, next) => {
+  try {
+    const { error, value } = resIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+    const foundPending = await prisma.restaurantPendingEdit.findFirst({
+      where: {
+        id: value.resId,
+      },
+    });
+    if (!foundPending) {
+      next(createError("Restaurant doesn't exist", 404));
+      return;
+    }
+    await prisma.restaurantPendingEdit.delete({
+      where: {
+        id: foundPending.id,
+      },
+    });
+    res.status(200).json({ message: "Pending has been deleted." });
   } catch (err) {
     console.log(err);
     next(err);
@@ -227,7 +253,7 @@ exports.updateResStatus = async (req, res, next) => {
         .json({ message: "Restaurant is now shown on the website." });
       return;
     }
-    if (foundRes.status === 0) {
+    if (foundRes.status === 1) {
       await prisma.restaurant.update({
         data: {
           status: 0,
