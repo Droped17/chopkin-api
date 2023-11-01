@@ -5,7 +5,7 @@
 Table Customer {
   id String [pk]
   firstName String [not null]
-  lastName String [not null]
+  lastName String
   profileImg String
   memberPoint Int [not null, default: 0]
   email String [unique, not null]
