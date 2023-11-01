@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const { registerSchema, loginSchema } = require("../validators/auth-validator");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
-
+require("dotenv");
 // model Customer {
 //   id          String     @id
 //   firstName   String
@@ -75,7 +75,7 @@ const createAdmin = async (req, res, next) => {
     });
 
     const payload = { adminId: newAdmin.id };
-    const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
     res.status(200).json({ message: "create admin", accessToken, newAdmin });
 
   } 
@@ -127,7 +127,7 @@ const CreateRestaurants = async (req, res, next) => {
     
 
     const payload = { restaurantId: newRestaurants.id };
-    const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
 
     res.status(200).json({message:"create restaurants success",accessToken,newRestaurants});
   }
@@ -175,7 +175,7 @@ const CustomerRegister = async (req, res, next) => {
 
     const payload = { customerId: customer.id };
     //accessToken
-    const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
 
     delete customer.password;
     res.status(200).json({ message: "Create customer success", accessToken, customer });
@@ -229,7 +229,7 @@ const customerLogin =async(data,customer,res,next) =>{
         return next(createError("password not match", 400));
       }
       const payload = { customerId: customer.id };
-      const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+      const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
       res.status(200).json({message:"customer Login",accessToken,customer});
 
     }
@@ -246,7 +246,7 @@ const adminLogin =async(data,admin,res,next) =>{
         return next(createError("password not match", 400));
       }
       const payload = { adminId: admin.id };
-      const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+      const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
       res.status(200).json({message:"admin Login",accessToken,admin});
 
     }
@@ -264,7 +264,7 @@ const restaurantLogin =async(data,restaurant,next) =>{
       return next(createError("password not match", 400));
     }
     const payload = { restaurantId: restaurant.id };
-    const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
     res.status(200).json({message:"restaurant Login",accessToken,restaurant});
   }
   catch(error){
@@ -272,80 +272,11 @@ const restaurantLogin =async(data,restaurant,next) =>{
   }
 }
 
-// const customerLogin = async(req,res,next)=>{
-//   try{
-//     const data = req.body;
-//     const customer = await prisma.customer.findFirst({
-//        where: {
-//         OR: [{ email: data.email }, { phone: data.phone }],
-//       }
-//     });
-
-//     const passwordCheck = await bcrypt.compare(data.password,customer.password);
-
-//     if(!passwordCheck){
-//       return next(createError("password not match", 400));
-//     }
-//     //payload 
-//     const payload = { customerId: customer.id };
-//     //accessToken
-//     const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-
-//     res.status(200).json({message:"customer Login",accessToken,customer});
-
-//   }catch(error)
-//   {
-//     next(error);
-//   }
-// }
-
-
-// const restaurantLogin = async(req,res,next)=>{
-//   try{
-//     const data = req.body;
-//     const restaurant = await prisma.restaurant.findFirst({
-//        where: {
-//         OR: [{ email: data.email }, { phone: data.phone }],
-//       }
-//     });
-//     const passwordCheck = await bcrypt.compare(data.password,restaurant.password);
-//     if(!passwordCheck){
-//       return next(createError("password not match", 400));
-//     }
-//     const payload = { restaurantId: restaurant.id };
-//     const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-//     res.status(200).json({message:"customer Login",accessToken,restaurant});
-
-//   }catch(error)
-//   {
-//     next(error);
-//   }
-// }
-// const adminLogin = async(req,res,next)=>{
-//   try{
-//     const data = req.body;
-//     const admin = await prisma.admin.findFirst({
-//       where:{
-//         email:data.email
-//       }
-//     });
-//     const passwordCheck = await bcrypt.compare(data.password,admin.password);
-//     const payload = { adminId: admin.id };
-//     const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-//     res.status(200).json({message:"customer Login",accessToken,admin});
-//     if(!passwordCheck){
-//       return next(createError("password not match", 400));
-//     }
-    
-
-//   }catch(error)
-//   {
-//     next(error);
-//   }
-// }
-
-
+const getUser = (req,res,next)=>{
+  return res.status(200).json({user:req.user});
+}
 
 exports.register = register;
 exports.createAdmin = createAdmin;
 exports.login = login;
+exports.getUser = getUser;
