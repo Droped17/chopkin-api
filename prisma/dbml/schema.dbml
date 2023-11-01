@@ -117,6 +117,7 @@ Table Payment {
 Table Review {
   id Int [pk, increment]
   message String [not null]
+  createAt DateTime [default: `now()`, not null]
   restaurantId String [not null]
   restaurant Restaurant [not null]
   reviewerId String [not null]
