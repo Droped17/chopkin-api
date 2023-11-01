@@ -247,7 +247,7 @@ const adminLogin =async(data,admin,res,next) =>{
       }
       const payload = { adminId: admin.id };
       const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-      res.status(200).json({message:"customer Login",accessToken,admin});
+      res.status(200).json({message:"admin Login",accessToken,admin});
 
     }
     catch(error){
@@ -265,7 +265,7 @@ const restaurantLogin =async(data,restaurant,next) =>{
     }
     const payload = { restaurantId: restaurant.id };
     const accessToken = jwt.sign(payload,process.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-    res.status(200).json({message:"customer Login",accessToken,restaurant});
+    res.status(200).json({message:"restaurant Login",accessToken,restaurant});
   }
   catch(error){
     next(error);
