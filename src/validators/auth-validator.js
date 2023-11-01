@@ -39,22 +39,22 @@ exports.loginSchema = loginSchema;
         // "districtIndex": 1,
         // "nationIndex": 1
 
-const registerCustomerSchema = joi.object({
-  restaurantName:joi.string().required(),
-  ownerFirstName:joi.string().required(),
-  ownerLastName:joi.string().required(),
+const registerCustomerSchema = Joi.object({
+  restaurantName:Joi.string().required(),
+  ownerFirstName:Joi.string().required(),
+  ownerLastName:Joi.string().required(),
 
 });
 exports.registerCustomerSchema = registerCustomerSchema;
 
-const registerRestaurantSchema = joi.object({
+const registerRestaurantSchema = Joi.object({
 
 });
-exports.registerRestaurantSchema = joi.object({
+exports.registerRestaurantSchema = Joi.object({
 
 });
 
-const registerAdminSchema = joi.object({
+const registerAdminSchema = Joi.object({
 
 });
 exports.registerAdminSchema = registerAdminSchema;
