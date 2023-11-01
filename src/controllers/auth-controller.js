@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { registerSchema, loginSchema } = require("../validators/auth-validator");
+// const { registerSchema, loginSchema } = require("../validators/auth-validator");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
 require("dotenv");
@@ -55,8 +55,9 @@ const register = async (req, res, next) => {
   try {
     const { usertype } = req.params;
     console.log(req.params);
-    if (usertype == "customer") CustomerRegister(req, res, next);
-    else if (usertype == "restaurant") CreateRestaurants(req, res, next);
+    if (usertype == "customer") return CustomerRegister(req, res, next);
+    else if (usertype == "restaurant") return CreateRestaurants(req, res, next);
+    res.status(404).json({message:"not found"});
   } catch (error) {
     next(error);
   }

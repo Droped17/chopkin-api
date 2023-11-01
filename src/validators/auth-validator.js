@@ -26,3 +26,35 @@ const loginSchema = Joi.object({
 });
 
 exports.loginSchema = loginSchema;
+
+        // "restaurantName": "asdasasdasd",
+        // "ownerFirstName": "data.ownerFirstName",
+        // "ownerLastName": "data.ownerLastName",
+        // "email": "gg@gg.com",
+        // "phone": "0855555555",
+        // "latitude": 123.33,
+        // "longitude": 2.22,
+        // "price": 5555,
+        // "categoryIndex": 1,
+        // "districtIndex": 1,
+        // "nationIndex": 1
+
+const registerCustomerSchema = joi.object({
+  restaurantName:joi.string().required(),
+  ownerFirstName:joi.string().required(),
+  ownerLastName:joi.string().required(),
+
+});
+exports.registerCustomerSchema = registerCustomerSchema;
+
+const registerRestaurantSchema = joi.object({
+
+});
+exports.registerRestaurantSchema = joi.object({
+
+});
+
+const registerAdminSchema = joi.object({
+
+});
+exports.registerAdminSchema = registerAdminSchema;
