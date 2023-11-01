@@ -11,3 +11,7 @@ exports.resNationSchema = Joi.object({
 exports.resCatSchema = Joi.object({
   catIndex: Joi.number().integer().positive().required(),
 });
+
+exports.packageIdSchema = Joi.object({
+  packageId: Joi.number().integer().positive().required(),
+});
