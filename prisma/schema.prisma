@@ -115,7 +115,8 @@ model Booking {
   totalKid       Int        @default(0)
   specialRequest String?
   createdAt      DateTime   @default(now())
-  bookingTime    DateTime
+  bookingDate    String
+  bookingTime    String
   ChatRooms      ChatRoom[]
 }
 

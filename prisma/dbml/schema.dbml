@@ -55,7 +55,7 @@ Table RestaurantPendingEdit {
   profileImg String
   latitude Float
   longitude Float
-  price String [not null]
+  price Int [not null]
   categoryIndex Int [not null]
   districtIndex Int
   nationIndex Int [not null]
@@ -103,7 +103,8 @@ Table Booking {
   totalKid Int [not null, default: 0]
   specialRequest String
   createdAt DateTime [default: `now()`, not null]
-  bookingTime DateTime [not null]
+  bookingDate String [not null]
+  bookingTime String [not null]
   ChatRooms ChatRoom [not null]
 }
 

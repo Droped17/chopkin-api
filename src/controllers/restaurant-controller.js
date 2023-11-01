@@ -1,5 +1,6 @@
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
+const fs = require("fs/promises");
 const { upload } = require("../config/cloudinaryService");
 const {
   resIdSchema,
@@ -175,6 +176,10 @@ exports.createEditPending = async (req, res, next) => {
   } catch (err) {
     console.log(err);
     next(err);
+  } finally {
+    for (let x of req.files.image) {
+      fs.unlink(x[0].path);
+    }
   }
 };
 
