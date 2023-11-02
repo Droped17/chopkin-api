@@ -6,7 +6,7 @@ const { checkReviewIdSchema } = require("../validators/review-validator");
 
 exports.createReview = async (req, res, next) => {
   try {
-    const { reviewMessage, url, restaurantId, score } = req.body;
+    const { reviewMessage, restaurantId, score } = req.body;
     if ((!reviewMessage || !reviewMessage.trim()) && !req.file) {
       return next(createError("Review or Image is required", 400));
     }
@@ -20,7 +20,7 @@ exports.createReview = async (req, res, next) => {
     if (reviewMessage) {
       data.message = reviewMessage;
     }
-    data.score = score;
+    data.score = +score;
     const review = await prisma.review.create({
       data: data,
       // data: {

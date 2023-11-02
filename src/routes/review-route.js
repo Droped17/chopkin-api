@@ -1,10 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const authenticated = require('../middleware/authenticatedMiddleware')
+const authenticated = require("../middleware/authenticatedMiddleware");
 
-const reviewController = require('../controllers/review-controller')
+const uploadMiddleware = require("../middleware/uploadMiddleware");
 
-router.post('/review',authenticated,reviewController.createReview )
+const reviewController = require("../controllers/review-controller");
 
+router.post(
+  "/",
+  authenticated,
+  uploadMiddleware.array("ReviewImages",4),
+  reviewController.createReview
+);
 
 module.exports = router;
