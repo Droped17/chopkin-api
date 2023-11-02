@@ -78,6 +78,7 @@ Table Package {
   img String
   restaurantId String [not null]
   restaurant Restaurant [not null]
+  Booking Booking [not null]
 }
 
 Table PackageEditPending {
@@ -99,6 +100,8 @@ Table Booking {
   orderStatus Int [not null, default: 0]
   payment Payment [not null]
   paymentId String [not null]
+  package Package [not null]
+  packageId Int [not null]
   totalCustomer Int [not null]
   totalKid Int [not null, default: 0]
   specialRequest String
@@ -167,6 +170,8 @@ Ref: Booking.customerId > Customer.id [delete: Cascade]
 Ref: Booking.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Booking.paymentId > Payment.id [delete: Cascade]
+
+Ref: Booking.packageId > Package.id
 
 Ref: Review.restaurantId > Restaurant.id [delete: Cascade]
 

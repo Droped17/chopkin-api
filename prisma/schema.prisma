@@ -90,6 +90,7 @@ model Package {
   img          String?
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  Booking      Booking[]
 }
 
 model PackageEditPending {
@@ -111,6 +112,8 @@ model Booking {
   orderStatus    Int        @default(0)
   payment        Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   paymentId      String
+  package        Package    @relation(fields: [packageId], references: [id])
+  packageId      Int
   totalCustomer  Int
   totalKid       Int        @default(0)
   specialRequest String?
