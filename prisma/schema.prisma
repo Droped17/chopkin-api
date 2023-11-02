@@ -29,7 +29,7 @@ model Customer {
 }
 
 model Admin {
-  id        String     @id
+  id        Int        @id @default(autoincrement())
   isAdmin   Int        @default(1)
   email     String     @unique
   password  String
@@ -153,8 +153,8 @@ model ReviewImage {
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomIdBySocket String
-  adminId        String?
-  admin          Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  admin          Admin?   @relation(fields: [adminId], references: [id])
+  adminId        Int?
   customerId     String
   customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   bookingId      String?
