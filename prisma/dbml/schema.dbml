@@ -61,6 +61,7 @@ Table RestaurantPendingEdit {
   nationIndex Int [not null]
   restaurant Restaurant [not null]
   restaurantId String [not null]
+  tempBusinessTimes TempBusinessTime [not null]
 }
 
 Table RestaurantImage {
@@ -157,6 +158,15 @@ Table BusinessTime {
   restaurantId String [not null]
 }
 
+Table TempBusinessTime {
+  id Int [pk, increment]
+  day Int [not null]
+  openTime String [not null]
+  closedTime String [not null]
+  restaurantPendingEdit RestaurantPendingEdit [not null]
+  restaurantPendingEditId Int [not null]
+}
+
 Ref: RestaurantPendingEdit.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: RestaurantImage.restaurantId > Restaurant.id [delete: Cascade]
@@ -186,3 +196,5 @@ Ref: ChatRoom.customerId > Customer.id [delete: Cascade]
 Ref: ChatRoom.bookingId > Booking.id [delete: Cascade]
 
 Ref: BusinessTime.restaurantId > Restaurant.id [delete: Cascade]
+
+Ref: TempBusinessTime.restaurantPendingEditId > RestaurantPendingEdit.id

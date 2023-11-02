@@ -53,6 +53,9 @@ exports.getPackageByRes = async (req, res, next) => {
 
 exports.createPackageEditPending = async (req, res, next) => {
   try {
+    if (!req.user.restaurantName) {
+      return next(createError("You're unauthorized", 401));
+    }
     const { name, detail, price } = req.body;
     const data = {
       name: name,
