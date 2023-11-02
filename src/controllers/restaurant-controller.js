@@ -56,6 +56,9 @@ exports.getResById = async (req, res, next) => {
 
 exports.getPendingRes = async (req, res, next) => {
   try {
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const pendingRes = await prisma.restaurant.findMany({
       where: {
         status: 0,
@@ -112,6 +115,9 @@ exports.getResByCat = async (req, res, next) => {
 
 exports.deleteRes = async (req, res, next) => {
   try {
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const { error, value } = resIdSchema.validate(req.params);
     if (error) {
       next(err);
@@ -140,6 +146,9 @@ exports.deleteRes = async (req, res, next) => {
 
 exports.createEditPending = async (req, res, next) => {
   try {
+    if (!req.user.restaurantName) {
+      return next(createError("You're unauthorized", 401));
+    }
     const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
       req.body;
     const data = {
@@ -181,6 +190,9 @@ exports.createEditPending = async (req, res, next) => {
 
 exports.getEditPending = async (req, res, next) => {
   try {
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const pendingEdit = await prisma.restaurant.findMany({
       include: RestaurantPendingEdits,
     });
@@ -193,6 +205,9 @@ exports.getEditPending = async (req, res, next) => {
 
 exports.deleteEditPending = async (req, res, next) => {
   try {
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const { error, value } = pendingIdSchema.validate(req.params);
     if (error) {
       next(error);
