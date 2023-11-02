@@ -6,7 +6,7 @@ const router = express.Router()
 
 // router.post('/login', authController.login)
 router.post('/register/:usertype', authController.register);
-router.post('/register/admin', authController.createAdmin);
+router.post('/create/admin', authController.createAdmin);
 router.post('/login', authController.login);
 router.get("/user",authenticatedMiddleware,authController.getUser);
 

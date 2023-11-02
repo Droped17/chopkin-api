@@ -17,7 +17,7 @@ Table Customer {
 }
 
 Table Admin {
-  id String [pk]
+  id Int [pk, increment]
   isAdmin Int [not null, default: 1]
   email String [unique, not null]
   password String [not null]
@@ -61,6 +61,7 @@ Table RestaurantPendingEdit {
   nationIndex Int [not null]
   restaurant Restaurant [not null]
   restaurantId String [not null]
+  tempBusinessTimes TempBusinessTime [not null]
 }
 
 Table RestaurantImage {
@@ -78,6 +79,7 @@ Table Package {
   img String
   restaurantId String [not null]
   restaurant Restaurant [not null]
+  Booking Booking [not null]
 }
 
 Table PackageEditPending {
@@ -99,6 +101,8 @@ Table Booking {
   orderStatus Int [not null, default: 0]
   payment Payment [not null]
   paymentId String [not null]
+  package Package [not null]
+  packageId Int [not null]
   totalCustomer Int [not null]
   totalKid Int [not null, default: 0]
   specialRequest String
@@ -137,8 +141,8 @@ Table ReviewImage {
 Table ChatRoom {
   id Int [pk, increment]
   roomIdBySocket String [not null]
-  adminId String
   admin Admin
+  adminId Int
   customerId String [not null]
   customer Customer [not null]
   bookingId String
@@ -152,6 +156,15 @@ Table BusinessTime {
   closedTime String [not null]
   restaurant Restaurant [not null]
   restaurantId String [not null]
+}
+
+Table TempBusinessTime {
+  id Int [pk, increment]
+  day Int [not null]
+  openTime String [not null]
+  closedTime String [not null]
+  restaurantPendingEdit RestaurantPendingEdit [not null]
+  restaurantPendingEditId Int [not null]
 }
 
 Ref: RestaurantPendingEdit.restaurantId > Restaurant.id [delete: Cascade]
@@ -168,16 +181,20 @@ Ref: Booking.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Booking.paymentId > Payment.id [delete: Cascade]
 
+Ref: Booking.packageId > Package.id
+
 Ref: Review.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Review.customerId > Customer.id [delete: Cascade]
 
 Ref: ReviewImage.reviewId > Review.id [delete: Cascade]
 
-Ref: ChatRoom.adminId > Admin.id [delete: Cascade]
+Ref: ChatRoom.adminId > Admin.id
 
 Ref: ChatRoom.customerId > Customer.id [delete: Cascade]
 
 Ref: ChatRoom.bookingId > Booking.id [delete: Cascade]
 
 Ref: BusinessTime.restaurantId > Restaurant.id [delete: Cascade]
+
+Ref: TempBusinessTime.restaurantPendingEditId > RestaurantPendingEdit.id

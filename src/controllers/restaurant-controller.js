@@ -6,6 +6,7 @@ const {
   resIdSchema,
   resNationSchema,
   resCatSchema,
+  pendingIdSchema,
 } = require("../validators/res-validator");
 
 exports.getAllRes = async (req, res, next) => {
@@ -55,6 +56,9 @@ exports.getResById = async (req, res, next) => {
 
 exports.getPendingRes = async (req, res, next) => {
   try {
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const pendingRes = await prisma.restaurant.findMany({
       where: {
         status: 0,
@@ -111,6 +115,9 @@ exports.getResByCat = async (req, res, next) => {
 
 exports.deleteRes = async (req, res, next) => {
   try {
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const { error, value } = resIdSchema.validate(req.params);
     if (error) {
       next(err);
@@ -139,10 +146,8 @@ exports.deleteRes = async (req, res, next) => {
 
 exports.createEditPending = async (req, res, next) => {
   try {
-    const { error, value } = resIdSchema.validate(req.params);
-    if (error) {
-      next(error);
-      return;
+    if (!req.user.restaurantName) {
+      return next(createError("You're unauthorized", 401));
     }
     const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
       req.body;
@@ -185,6 +190,9 @@ exports.createEditPending = async (req, res, next) => {
 
 exports.getEditPending = async (req, res, next) => {
   try {
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const pendingEdit = await prisma.restaurant.findMany({
       include: RestaurantPendingEdits,
     });
@@ -197,7 +205,10 @@ exports.getEditPending = async (req, res, next) => {
 
 exports.deleteEditPending = async (req, res, next) => {
   try {
-    const { error, value } = resIdSchema.validate(req.params);
+    if (!req.user.admin) {
+      return next(createError("You're unauthorized", 401));
+    }
+    const { error, value } = pendingIdSchema.validate(req.params);
     if (error) {
       next(error);
       return;

@@ -15,3 +15,6 @@ exports.resCatSchema = Joi.object({
 exports.packageIdSchema = Joi.object({
   packageId: Joi.number().integer().positive().required(),
 });
+exports.pendingIdSchema = Joi.object({
+  pendingId: Joi.number().integer().positive().required(),
+});

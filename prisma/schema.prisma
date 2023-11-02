@@ -29,7 +29,7 @@ model Customer {
 }
 
 model Admin {
-  id        String     @id
+  id        Int        @id @default(autoincrement())
   isAdmin   Int        @default(1)
   email     String     @unique
   password  String
@@ -62,17 +62,18 @@ model Restaurant {
 }
 
 model RestaurantPendingEdit {
-  id             Int        @id @default(autoincrement())
-  restaurantName String     @unique
-  profileImg     String?
-  latitude       Float?
-  longitude      Float?
-  price          Int
-  categoryIndex  Int
-  districtIndex  Int?
-  nationIndex    Int
-  restaurant     Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  restaurantId   String
+  id                Int                @id @default(autoincrement())
+  restaurantName    String             @unique
+  profileImg        String?
+  latitude          Float?
+  longitude         Float?
+  price             Int
+  categoryIndex     Int
+  districtIndex     Int?
+  nationIndex       Int
+  restaurant        Restaurant         @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId      String
+  tempBusinessTimes TempBusinessTime[]
 }
 
 model RestaurantImage {
@@ -90,6 +91,7 @@ model Package {
   img          String?
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  Booking      Booking[]
 }
 
 model PackageEditPending {
@@ -111,6 +113,8 @@ model Booking {
   orderStatus    Int        @default(0)
   payment        Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   paymentId      String
+  package        Package    @relation(fields: [packageId], references: [id])
+  packageId      Int
   totalCustomer  Int
   totalKid       Int        @default(0)
   specialRequest String?
@@ -149,8 +153,8 @@ model ReviewImage {
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomIdBySocket String
-  adminId        String?
-  admin          Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  admin          Admin?   @relation(fields: [adminId], references: [id])
+  adminId        Int?
   customerId     String
   customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
   bookingId      String?
@@ -164,4 +168,13 @@ model BusinessTime {
   closedTime   String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   restaurantId String
+}
+
+model TempBusinessTime {
+  id                      Int                   @id @default(autoincrement())
+  day                     Int
+  openTime                String
+  closedTime              String
+  restaurantPendingEdit   RestaurantPendingEdit @relation(fields: [restaurantPendingEditId], references: [id])
+  restaurantPendingEditId Int
 }
