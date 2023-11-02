@@ -1,18 +1,22 @@
 const prisma = require("../models/prisma");
 // model Booking {
-//     id            String     @id
-//     customerId    String
-//     customer      Customer   @relation(fields: [customerId], references: [id])
-//     restaurantId  String
-//     restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
-//     orderStatus   Int 
-//     paymentStatus Int
-//     totalCustomer Int
-//     totalKid      Int
-//     createdAt     DateTime   @default(now())
-//     bookingTime   DateTime
-//     Payment       Payment[]
-//     ChatRoom      ChatRoom[]
+// id             String     @id @default(uuid())
+// customerId     String
+// customer       Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+// restaurantId   String
+// restaurant     Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+// orderStatus    Int        @default(0)
+// payment        Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+// paymentId      String
+// package        Package    @relation(fields: [packageId], references: [id])
+// packageId      Int
+// totalCustomer  Int
+// totalKid       Int        @default(0)
+// specialRequest String?
+// createdAt      DateTime   @default(now())
+// bookingDate    String
+// bookingTime    String
+// ChatRooms      ChatRoom[]
 //   }
 
 // model Payment {
@@ -20,6 +24,20 @@ const prisma = require("../models/prisma");
 //     paymentStatus Int       @default(1)
 //     Booking       Booking[]
 //   }
+
+
+//create
+
+const customerCreateBooking =async(req,res,next)=>{
+    try{
+
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+
 
 //get by customerId
 const getBookingByCustomerId = async(req,res,next)=>{
