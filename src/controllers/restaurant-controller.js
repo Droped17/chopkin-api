@@ -6,6 +6,7 @@ const {
   resIdSchema,
   resNationSchema,
   resCatSchema,
+  pendingIdSchema,
 } = require("../validators/res-validator");
 
 exports.getAllRes = async (req, res, next) => {
@@ -139,11 +140,6 @@ exports.deleteRes = async (req, res, next) => {
 
 exports.createEditPending = async (req, res, next) => {
   try {
-    const { error, value } = resIdSchema.validate(req.params);
-    if (error) {
-      next(error);
-      return;
-    }
     const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
       req.body;
     const data = {
@@ -197,7 +193,7 @@ exports.getEditPending = async (req, res, next) => {
 
 exports.deleteEditPending = async (req, res, next) => {
   try {
-    const { error, value } = resIdSchema.validate(req.params);
+    const { error, value } = pendingIdSchema.validate(req.params);
     if (error) {
       next(error);
       return;
