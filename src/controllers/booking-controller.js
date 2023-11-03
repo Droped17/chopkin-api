@@ -198,44 +198,7 @@ const getBookingByStatus = async(req,res,next)=>{
         next(error);
     }
 }
-//post
-//create booking
-//userBooking
-const userBooking =async(req,res,next)=>{
-    try{
-//     id            String     @id
-//     customerId    String
-//     customer      Customer   @relation(fields: [customerId], references: [id])
-//     restaurantId  String
-//     restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
-//     orderStatus   Int 
-//     paymentStatus Int
-//     totalCustomer Int
-//     totalKid      Int
-//     createdAt     DateTime   @default(now())
-//     bookingTime   DateTime
-//     Payment       Payment[]
-//     ChatRoom      ChatRoom[]
 
-        const restaurantId = req.body.restaurantId;
-        const customerId = req.body.userId;
-        const totalCustomer = req.body.totalCustomer;
-        const createdBooking = await prisma.booking.create({
-            data:{
-                customerId:customerId,
-                restaurantId:restaurantId,
-                totalCustomer:totalCustomer
-            }
-        });
-
-        res.status(200).json({message:"create Booking",createdBooking});
-
-    }
-    catch(error){
-        next(error);
-
-    }
-}
 
 //delete booking
 const deleteBookingById = async(req,res,next)=>{
@@ -283,10 +246,8 @@ exports.updateOrderStatusByBookingId = updateOrderStatusByBookingId;
 exports.getBookingByCustomerId = getBookingByCustomerId;
 exports.getBookingByStatus = getBookingByStatus;
 exports.deleteBookingById = deleteBookingById;
-exports.userBooking = userBooking;
 exports.getAllBooking = getAllBooking;
 exports.getBookingByRestaurantId = getBookingByRestaurantId;
-
 exports.adminEditBooking = adminEditBooking;
 exports.customerCreateBooking = customerCreateBooking;
 
