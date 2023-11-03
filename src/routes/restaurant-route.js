@@ -6,7 +6,7 @@ const authenticatedMw = require("../middleware/authenticatedMiddleware");
 const upload = require("../middleware/uploadMiddleware");
 
 router.get("/all", resController.getAllRes); // GET ALL RESTAURANTS
-router.get("/:resId", resController.getResById); // GET RESTAURANT BY ID FOR RESTAURANT PAGE
+router.get("/resById/:resId", resController.getResById); // GET RESTAURANT BY ID FOR RESTAURANT PAGE
 router.get("/getPendingRes", authenticatedMw, resController.getPendingRes); // GET ALL PENDING RESTAURANTS
 router.get("/resByNation/:nationIndex", resController.getResByNation); // GET RESTAURANTS BY NATIONALITY
 router.get("/resByCat/:catIndex", resController.getResByCat); // GET RESTAURANTS BY CATEGORY
