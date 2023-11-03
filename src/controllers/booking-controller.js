@@ -19,23 +19,6 @@ const createError = require("../utils/create-error");
 // bookingDate    String
 // bookingTime    String
 // ChatRooms      ChatRoom[]
-
-// model Payment {
-//     id            String    @id @default(uuid())
-//     paymentStatus Int       @default(1)
-//     Booking       Booking[]
-//   }
-
-// model Package {
-//     id           Int        @id @default(autoincrement())
-//     name         String
-//     detail       String
-//     price        Int
-//     img          String?
-//     restaurantId String
-//     restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-//     Booking      Booking[]
-//   }
   
 //==use==
 //create post | useAuthMiddleware
@@ -66,18 +49,13 @@ const customerCreateBooking =async(req,res,next)=>{
         if(!selectPackage){
             return next(createError("not found this package",404));
         }
-        // const payment = await prisma.payment.create({
-        //     data:{
-        //         paymentStatus:1||paymentStatus
-        //     }
-        // });
-        //create payment
+
+        
+        //Validate CustomerBookingData
+        
+        //Validate CustomerBookingData
+        
         const payment = await paymentMiddleware.createPaymentFunction(paymentStatus,next);
-
-        //Validate CustomerBookingData
-
-        //Validate CustomerBookingData
-
         //create booking
         const newBooking =  await prisma.booking.create({
             data:{
@@ -120,7 +98,7 @@ const adminEditBooking = async(req,res,next)=>{
         next(error);
     }
 }
-//==payment controller
+//For===payment controller===
 const editPayment = async(req,res,next)=>{
     try{
 

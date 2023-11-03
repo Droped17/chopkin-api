@@ -1,6 +1,13 @@
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
 
+// model Payment {
+//     id            String    @id @default(uuid())
+//     paymentStatus Int       @default(1)
+//     Booking       Booking[]
+//   }
+
+
 const paymentFunction = {};
 
 const createPaymentFunction = async(paymentStatus,next)=>{
