@@ -56,7 +56,7 @@ exports.getResById = async (req, res, next) => {
 
 exports.getPendingRes = async (req, res, next) => {
   try {
-    if (!req.user.admin) {
+    if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
     const pendingRes = await prisma.restaurant.findMany({
@@ -115,7 +115,7 @@ exports.getResByCat = async (req, res, next) => {
 
 exports.deleteRes = async (req, res, next) => {
   try {
-    if (!req.user.admin) {
+    if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
     const { error, value } = resIdSchema.validate(req.params);
@@ -151,7 +151,7 @@ exports.createEditPending = async (req, res, next) => {
       return next(createError("You're unauthorized", 401));
     }
     const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
-      req.body.info;
+      req.body;
     const data = {
       restaurantName: restaurantName,
       price: price,
@@ -160,28 +160,33 @@ exports.createEditPending = async (req, res, next) => {
       districtIndex: districtIndex,
       nationIndex: nationIndex,
     };
-    await prisma.restaurantPendingEdit.create({
+
+    const pendingInfo = await prisma.restaurantPendingEdit.create({
       data: data,
     });
-    if (req.files.image) {
-      for (let x of req.files.image) {
-        const images = await upload(x[0].path);
+    if (req.files) {
+      for (let x of req.files) {
+        console.log("araiwa", x);
+        const images = await upload(x.path);
+        console.log("imagesss", images);
         await prisma.restaurantImage.create({
           data: {
             url: images,
-            restaurantId: value.resId,
+            restaurantId: req.user.id,
           },
         });
       }
+      res
+        .status(201)
+        .json({ message: "Edit pending has been created.", pendingInfo });
     }
-    res.json(201).json({ message: "Edit pending has been created." });
   } catch (err) {
     console.log(err);
     next(err);
   } finally {
     if (req.files) {
-      for (let x of req.files.image) {
-        fs.unlink(x[0].path);
+      for (let x of req.files) {
+        fs.unlink(x.path);
       }
     }
   }
@@ -219,7 +224,7 @@ exports.createProfileImgPending = async (req, res, next) => {
 
 exports.getEditPending = async (req, res, next) => {
   try {
-    if (!req.user.admin) {
+    if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
     const pendingEdit = await prisma.restaurant.findMany({
@@ -234,7 +239,7 @@ exports.getEditPending = async (req, res, next) => {
 
 exports.deleteEditPending = async (req, res, next) => {
   try {
-    if (!req.user.admin) {
+    if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
     const { error, value } = pendingIdSchema.validate(req.params);
