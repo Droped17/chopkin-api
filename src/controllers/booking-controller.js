@@ -24,21 +24,57 @@ const prisma = require("../models/prisma");
 //     Booking       Booking[]
 //   }
 
-
-//create
-
+// model Package {
+//     id           Int        @id @default(autoincrement())
+//     name         String
+//     detail       String
+//     price        Int
+//     img          String?
+//     restaurantId String
+//     restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+//     Booking      Booking[]
+//   }
+  
+//create post | useAuthMiddleware
 const customerCreateBooking =async(req,res,next)=>{
     try{
-        //validate
+        const data = req.body; //
+        console.log(data);
+
+        const customer = req.user;
 
         //validate
 
-        await prisma.booking.create({
+        //validate
+
+        const selectPackage = await prisma.package.findUnique({
+            where:{ 
+                id:data.bookingId
+            }
+        });
+
+        const payment = await prisma.payment.create({
             data:{
 
             }
         });
 
+        const newBooking =  await prisma.booking.create({
+            data:{
+                customerId:customer.id,
+                restaurantId:"",
+                paymentId:payment.id,
+                packageId:"",
+                totalCustomer:"",
+                totalKid:"",
+                specialRequest:"",
+                bookingDate:""
+
+            }
+        
+        });
+
+        res.status(200).json({message:"create complete",newBooking})
     }
     catch(error){
         next(error);
