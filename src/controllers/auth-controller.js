@@ -4,6 +4,10 @@ const { registerSchema, loginSchema } = require("../validators/auth-validator");
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
 require("dotenv");
+
+//email Or phone
+
+
 // model Customer {
 //   id          String     @id
 //   firstName   String
@@ -68,12 +72,15 @@ const createAdmin = async (req, res, next) => {
 
     //validate
     const adminData = req.body;
+    adminData.password = await bcrypt.hash(adminData.password, 12);
+
     const newAdmin = await prisma.admin.create({
       data: {
         email: adminData.email,
         password: adminData.password,
       },
     });
+    
 
     const payload = { adminId: newAdmin.id };
     const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
@@ -108,6 +115,9 @@ const CreateRestaurants = async (req, res, next) => {
     if (checkRestaurants || checkCustomer) {
       return next(createError("have this email and password", 400));
     }
+    //1234 default password
+    data.password = await bcrypt.hash("1234",12);
+    console.log(data.password)
 
     const newRestaurants = await prisma.restaurant.create({
       data: {
@@ -125,7 +135,8 @@ const CreateRestaurants = async (req, res, next) => {
         nationIndex: data.nationIndex,
       },
     });
-    
+
+ 
 
     const payload = { restaurantId: newRestaurants.id };
     const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
@@ -191,7 +202,7 @@ const login = async(req,res,next)=>{
     const data = req.body;
     const checkRestaurants = await prisma.restaurant.findFirst({
       where: {
-        OR: [{ email: data.email }, { phone: data.phone }],
+        OR: [{ email: data.emailOrPhone }, { phone: data.emailOrPhone }],
       }
     });
 
@@ -199,7 +210,7 @@ const login = async(req,res,next)=>{
 
     const checkCustomer = await prisma.customer.findFirst({
       where: {
-        OR: [{ email: data.email }, { phone: data.phone }],
+        OR: [{ email: data.emailOrPhone }, { phone: data.emailOrPhone }],
       }
     });
     
@@ -207,7 +218,7 @@ const login = async(req,res,next)=>{
     
     const checkAdmin = await prisma.admin.findFirst({
       where:{
-        email:data.email
+        email:data.emailOrPhone
       }
     });
     if(checkAdmin) return adminLogin(data,checkAdmin,res,next);
@@ -242,6 +253,7 @@ const customerLogin =async(data,customer,res,next) =>{
 const adminLogin =async(data,admin,res,next) =>{
     try{
       const passwordCheck = await bcrypt.compare(data.password,admin.password);
+      console.log(admin.password);
       if(!passwordCheck)
       {
         return next(createError("password not match", 400));
@@ -257,9 +269,12 @@ const adminLogin =async(data,admin,res,next) =>{
 
 }
 
-const restaurantLogin =async(data,restaurant,next) =>{
+const restaurantLogin =async(data,restaurant,res,next) =>{
   try{
     const passwordCheck = await bcrypt.compare(data.password,restaurant.password);
+    console.log(restaurant.password)
+    // const passwordCheck = data.password === restaurant.password
+
     if(!passwordCheck)
     {
       return next(createError("password not match", 400));
