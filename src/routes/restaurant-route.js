@@ -8,8 +8,8 @@ const upload = require("../middleware/uploadMiddleware");
 router.get("/all", resController.getAllRes); // GET ALL RESTAURANTS
 router.get("/:resId", resController.getResById); // GET RESTAURANT BY ID FOR RESTAURANT PAGE
 router.get("/getPendingRes", authenticatedMw, resController.getPendingRes); // GET ALL PENDING RESTAURANTS
-router.get("/:nationIndex", resController.getResByNation); // GET RESTAURANTS BY NATIONALITY
-router.get("/:catIndex", resController.getResByCat); // GET RESTAURANTS BY CATEGORY
+router.get("/resByNation/:nationIndex", resController.getResByNation); // GET RESTAURANTS BY NATIONALITY
+router.get("/resByCat/:catIndex", resController.getResByCat); // GET RESTAURANTS BY CATEGORY
 router.delete("/delete/:resId", authenticatedMw, resController.deleteRes); // DELETE RESTAURANT
 router.post(
   "/edit",

@@ -84,7 +84,7 @@ exports.getResByNation = async (req, res, next) => {
       },
       include: {
         Reviews: true,
-        BusinessTime: true,
+        BusinessTimes: true,
       },
     });
     res.status(200).json(resByNation);
