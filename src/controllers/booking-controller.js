@@ -1,5 +1,5 @@
 const prisma = require("../models/prisma");
-// model Booking {
+//booking
 // id             String     @id @default(uuid())
 // customerId     String
 // customer       Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -17,7 +17,6 @@ const prisma = require("../models/prisma");
 // bookingDate    String
 // bookingTime    String
 // ChatRooms      ChatRoom[]
-//   }
 
 // model Payment {
 //     id            String    @id @default(uuid())
@@ -30,13 +29,21 @@ const prisma = require("../models/prisma");
 
 const customerCreateBooking =async(req,res,next)=>{
     try{
+        //validate
+
+        //validate
+
+        await prisma.booking.create({
+            data:{
+
+            }
+        });
 
     }
     catch(error){
         next(error);
     }
 }
-
 
 
 //get by customerId
