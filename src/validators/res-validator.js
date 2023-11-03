@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 exports.resIdSchema = Joi.object({
-  resId: Joi.number().integer().positive().required(),
+  resId: Joi.string().trim().required(),
 });
 
 exports.resNationSchema = Joi.object({
