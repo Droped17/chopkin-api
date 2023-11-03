@@ -150,8 +150,14 @@ exports.createEditPending = async (req, res, next) => {
     if (!req.user.restaurantName) {
       return next(createError("You're unauthorized", 401));
     }
-    const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
-      req.body;
+    const {
+      restaurantName,
+      price,
+      categoryIndex,
+      districtIndex,
+      nationIndex,
+      businessTime,
+    } = req.body.info;
     const data = {
       restaurantName: restaurantName,
       price: price,
@@ -166,12 +172,22 @@ exports.createEditPending = async (req, res, next) => {
       data.profileImg = url;
     }
 
-    const pendingInfo = await prisma.restaurantPendingEdit.create({
+    const pendingOutput = await prisma.restaurantPendingEdit.create({
       data: data,
     });
-    res
-      .status(201)
-      .json({ message: "Edit pending has been created.", pendingInfo });
+
+    const businessTimeData = businessTime.map(
+      (x) => (x.restaurantPendingEditId = pendingOutput.id)
+    );
+    const businessTimeOutput = await prisma.tempBusinessTime.createMany({
+      data: businessTimeData,
+    });
+
+    res.status(201).json({
+      message: "Edit pending has been created.",
+      pendingOutput,
+      businessTimeOutput,
+    });
   } catch (err) {
     console.log(err);
     next(err);
