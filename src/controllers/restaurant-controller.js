@@ -194,8 +194,9 @@ exports.createEditPending = async (req, res, next) => {
 
 exports.createProfileImgPending = async (req, res, next) => {
   try {
+    console.log(req.file);
     if (!req.user.restaurantName) {
-      next(createError("You're unauthorized", 404));
+      next(createError("You're unauthorized", 401));
       return;
     }
 
@@ -205,19 +206,21 @@ exports.createProfileImgPending = async (req, res, next) => {
       return;
     }
 
-    if (req.file.profileImg) {
-      const url = await upload(req.files.profileImg[0].path);
-      const pending = await prisma.restaurantPendingEdit.update({
-        data: {
-          profileImg: url,
-        },
-        where: {
-          id: value.pendingId,
-        },
-      });
+    if (req.file) {
+      console.log(req.file);
+      // const url = await upload(req.files.profileImg[0].path);
+      // const pending = await prisma.restaurantPendingEdit.update({
+      //   data: {
+      //     profileImg: url,
+      //   },
+      //   where: {
+      //     id: value.pendingId,
+      //   },
+      // });
       res.status(201).json(pending);
     }
   } catch (err) {
+    console.log(err);
     next(err);
   }
 };
