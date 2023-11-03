@@ -17,7 +17,7 @@ Table Customer {
 }
 
 Table Admin {
-  id String [pk]
+  id Int [pk, increment]
   isAdmin Int [not null, default: 1]
   email String [unique, not null]
   password String [not null]
@@ -141,8 +141,8 @@ Table ReviewImage {
 Table ChatRoom {
   id Int [pk, increment]
   roomIdBySocket String [not null]
-  adminId String
   admin Admin
+  adminId Int
   customerId String [not null]
   customer Customer [not null]
   bookingId String
@@ -189,7 +189,7 @@ Ref: Review.customerId > Customer.id [delete: Cascade]
 
 Ref: ReviewImage.reviewId > Review.id [delete: Cascade]
 
-Ref: ChatRoom.adminId > Admin.id [delete: Cascade]
+Ref: ChatRoom.adminId > Admin.id
 
 Ref: ChatRoom.customerId > Customer.id [delete: Cascade]
 
