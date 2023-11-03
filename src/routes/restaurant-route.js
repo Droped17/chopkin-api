@@ -14,14 +14,14 @@ router.delete("/delete/:resId", authenticatedMw, resController.deleteRes); // DE
 router.post(
   "/edit",
   authenticatedMw,
-  upload.array("image"),
+  upload.single("profileImg"),
   resController.createEditPending
 ); // CREATE EDIT PENDING
 router.patch(
-  "/createProfileImgPending/:pendingId",
+  "/createResImgPending/:pendingId",
   authenticatedMw,
-  upload.single("profileImg"),
-  resController.createProfileImgPending
+  upload.array("image"),
+  resController.createResImgPending
 );
 router.get("/getPendingEdit", authenticatedMw, resController.getEditPending); // GET ALL EDIT PENDINGS
 router.delete(

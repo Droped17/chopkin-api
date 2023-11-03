@@ -17,7 +17,7 @@ exports.getAllRes = async (req, res, next) => {
       },
       include: {
         Reviews: true,
-        BusinessTime: true,
+        BusinessTimes: true,
       },
     });
     res.status(200).json(restaurants);
@@ -161,9 +161,42 @@ exports.createEditPending = async (req, res, next) => {
       nationIndex: nationIndex,
     };
 
+    if (req.file) {
+      const url = await upload(req.file.path);
+      data.profileImg = url;
+    }
+
     const pendingInfo = await prisma.restaurantPendingEdit.create({
       data: data,
     });
+    res
+      .status(201)
+      .json({ message: "Edit pending has been created.", pendingInfo });
+  } catch (err) {
+    console.log(err);
+    next(err);
+  } finally {
+    if (req.file) {
+      fs.unlink(req.file.path);
+    }
+  }
+};
+
+// NEED FIXING *************
+exports.createResImgPending = async (req, res, next) => {
+  try {
+    console.log(req.file);
+    if (!req.user.restaurantName) {
+      next(createError("You're unauthorized", 401));
+      return;
+    }
+
+    const { error, value } = pendingIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+
     if (req.files) {
       for (let x of req.files) {
         console.log("araiwa", x);
@@ -176,9 +209,6 @@ exports.createEditPending = async (req, res, next) => {
           },
         });
       }
-      res
-        .status(201)
-        .json({ message: "Edit pending has been created.", pendingInfo });
     }
   } catch (err) {
     console.log(err);
@@ -189,36 +219,6 @@ exports.createEditPending = async (req, res, next) => {
         fs.unlink(x.path);
       }
     }
-  }
-};
-
-exports.createProfileImgPending = async (req, res, next) => {
-  try {
-    if (!req.user.restaurantName) {
-      next(createError("You're unauthorized", 404));
-      return;
-    }
-
-    const { error, value } = pendingIdSchema.validate(req.params);
-    if (error) {
-      next(error);
-      return;
-    }
-
-    if (req.file.profileImg) {
-      const url = await upload(req.files.profileImg[0].path);
-      const pending = await prisma.restaurantPendingEdit.update({
-        data: {
-          profileImg: url,
-        },
-        where: {
-          id: value.pendingId,
-        },
-      });
-      res.status(201).json(pending);
-    }
-  } catch (err) {
-    next(err);
   }
 };
 
