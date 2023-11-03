@@ -10,7 +10,8 @@ const notFoundMiddleware = require("../src/middleware/notFoundMiddleware");
 const errorMw = require("../src/middleware/errorMiddleware");
 const authRoute = require("../src/routes/auth-route");
 const packageRoute = require("../src/routes/package-route");
-const reviewRoute = require('./routes/review-route')
+const reviewRoute = require('./routes/review-route');
+const bookingRoute = require("./routes/booking-route");
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -21,7 +22,8 @@ app.use("/restaurant", restaurantRoute);
 app.use("/chat", chatRoute);
 app.use("/package", packageRoute);
 app.use("/auth", authRoute);
-app.use('/review', reviewRoute)
+app.use('/review', reviewRoute);
+app.use("/booking",bookingRoute);
 
 app.use(notFoundMiddleware);
 app.use(errorMw);

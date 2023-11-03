@@ -1,4 +1,6 @@
 const prisma = require("../models/prisma");
+const paymentMiddleware = require("../middleware/paymentMiddleware");
+const createError = require("../utils/create-error");
 //booking
 // id             String     @id @default(uuid())
 // customerId     String
@@ -35,43 +37,60 @@ const prisma = require("../models/prisma");
 //     Booking      Booking[]
 //   }
   
+//==use==
 //create post | useAuthMiddleware
 const customerCreateBooking =async(req,res,next)=>{
     try{
         const data = req.body; //
         console.log(data);
-
+        const packageId = data.packageId;
         const customer = req.user;
-
+        const restaurantId = data.restaurantId;
+        const bookingDate = data.bookingDate;
+        const bookingTime = data.bookingTime;
+        const specialRequest = data.specialRequest;
+        const totalKid = data.totalKid;
+        const totalCustomer = data.totalCustomer;
+        const paymentStatus = data.paymentStatus;
         //validate
 
         //validate
 
-        const selectPackage = await prisma.package.findUnique({
+        //find package
+        const selectPackage = await prisma.package.findFirst({
             where:{ 
-                id:data.bookingId
+                id:packageId
             }
         });
+        //check package
+        if(!selectPackage){
+            return next(createError("not found this package",404));
+        }
+        // const payment = await prisma.payment.create({
+        //     data:{
+        //         paymentStatus:1||paymentStatus
+        //     }
+        // });
+        //create payment
+        const payment = await paymentMiddleware.createPaymentFunction(paymentStatus,next);
 
-        const payment = await prisma.payment.create({
-            data:{
+        //Validate CustomerBookingData
 
-            }
-        });
+        //Validate CustomerBookingData
 
+        //create booking
         const newBooking =  await prisma.booking.create({
             data:{
                 customerId:customer.id,
-                restaurantId:"",
+                restaurantId:restaurantId,
                 paymentId:payment.id,
-                packageId:"",
-                totalCustomer:"",
-                totalKid:"",
-                specialRequest:"",
-                bookingDate:""
-
+                packageId:selectPackage.id,
+                totalCustomer:totalCustomer,
+                totalKid:totalKid,
+                specialRequest:specialRequest||"",
+                bookingDate:bookingDate,
+                bookingTime:bookingTime,
             }
-        
         });
 
         res.status(200).json({message:"create complete",newBooking})
@@ -81,6 +100,60 @@ const customerCreateBooking =async(req,res,next)=>{
     }
 }
 
+
+
+const adminEditBooking = async(req,res,next)=>{
+    try{
+        const data = req.body.data;
+        const bookingId = req.body.bookingId
+
+        const editBooking = await prisma.booking.update({
+            where:{
+                id:bookingId
+            },
+            data:data//match by key
+        });
+
+        res.status(200).json({message:"edit complete",editBooking});
+    }
+    catch(error){
+        next(error);
+    }
+}
+//==payment controller
+const editPayment = async(req,res,next)=>{
+    try{
+
+        const data = req.body;
+        const paymentId  = data.paymentId;
+        const status = data.status;
+
+        const check  = await prisma.payment.findFirst({
+            where:{
+                id:paymentId
+            }
+        });
+
+        //check
+        if(!check) next(createError("dont have this payment Id",404));
+
+        const paymentUpdated = await prisma.payment.update({
+            where:{
+                id:paymentId
+            },
+            data:{
+                paymentStatus:status
+            }
+        });
+        
+        res.status(200).json({message:"update complete",paymentUpdated});
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+//===before===
 
 //get by customerId
 const getBookingByCustomerId = async(req,res,next)=>{
@@ -235,5 +308,8 @@ exports.deleteBookingById = deleteBookingById;
 exports.userBooking = userBooking;
 exports.getAllBooking = getAllBooking;
 exports.getBookingByRestaurantId = getBookingByRestaurantId;
+
+exports.adminEditBooking = adminEditBooking;
+exports.customerCreateBooking = customerCreateBooking;
 
 // exports.updatePaymentStatus = updatePaymentStatus;
