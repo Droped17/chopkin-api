@@ -17,6 +17,12 @@ router.post(
   upload.array("image"),
   resController.createEditPending
 ); // CREATE EDIT PENDING
+router.patch(
+  "/createProfileImgPending/:pendingId",
+  authenticatedMw,
+  upload.single("profileImg"),
+  resController.createProfileImgPending
+);
 router.get("/getPendingEdit", authenticatedMw, resController.getEditPending); // GET ALL EDIT PENDINGS
 router.delete(
   "/editPending/:pendingId",

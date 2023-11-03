@@ -146,23 +146,20 @@ exports.deleteRes = async (req, res, next) => {
 
 exports.createEditPending = async (req, res, next) => {
   try {
+    console.log(req.body);
     if (!req.user.restaurantName) {
       return next(createError("You're unauthorized", 401));
     }
     const { restaurantName, price, categoryIndex, districtIndex, nationIndex } =
-      req.body;
+      req.body.info;
     const data = {
       restaurantName: restaurantName,
       price: price,
-      restaurantId: value.resId,
+      restaurantId: req.user.id,
       categoryIndex: categoryIndex,
       districtIndex: districtIndex,
       nationIndex: nationIndex,
     };
-    if (req.files.profileImg) {
-      const url = await upload(req.files.profileImg[0].path);
-      data.profileImg = url;
-    }
     await prisma.restaurantPendingEdit.create({
       data: data,
     });
@@ -177,14 +174,46 @@ exports.createEditPending = async (req, res, next) => {
         });
       }
     }
-    res.json(201).json({ message: "Edit pending has been created" });
+    res.json(201).json({ message: "Edit pending has been created." });
   } catch (err) {
     console.log(err);
     next(err);
   } finally {
-    for (let x of req.files.image) {
-      fs.unlink(x[0].path);
+    if (req.files) {
+      for (let x of req.files.image) {
+        fs.unlink(x[0].path);
+      }
     }
+  }
+};
+
+exports.createProfileImgPending = async (req, res, next) => {
+  try {
+    if (!req.user.restaurantName) {
+      next(createError("You're unauthorized", 404));
+      return;
+    }
+
+    const { error, value } = pendingIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+
+    if (req.file.profileImg) {
+      const url = await upload(req.files.profileImg[0].path);
+      const pending = await prisma.restaurantPendingEdit.update({
+        data: {
+          profileImg: url,
+        },
+        where: {
+          id: value.pendingId,
+        },
+      });
+      res.status(201).json(pending);
+    }
+  } catch (err) {
+    next(err);
   }
 };
 
