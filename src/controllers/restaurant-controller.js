@@ -161,38 +161,29 @@ exports.createEditPending = async (req, res, next) => {
       nationIndex: nationIndex,
     };
 
+    if (req.file) {
+      const url = await upload(req.file.path);
+      data.profileImg = url;
+    }
+
     const pendingInfo = await prisma.restaurantPendingEdit.create({
       data: data,
     });
-    if (req.files) {
-      for (let x of req.files) {
-        console.log("araiwa", x);
-        const images = await upload(x.path);
-        console.log("imagesss", images);
-        await prisma.restaurantImage.create({
-          data: {
-            url: images,
-            restaurantId: req.user.id,
-          },
-        });
-      }
-      res
-        .status(201)
-        .json({ message: "Edit pending has been created.", pendingInfo });
-    }
+    res
+      .status(201)
+      .json({ message: "Edit pending has been created.", pendingInfo });
   } catch (err) {
     console.log(err);
     next(err);
   } finally {
-    if (req.files) {
-      for (let x of req.files) {
-        fs.unlink(x.path);
-      }
+    if (req.file) {
+      fs.unlink(req.file.path);
     }
   }
 };
 
-exports.createProfileImgPending = async (req, res, next) => {
+// NEED FIXING *************
+exports.createResImgPending = async (req, res, next) => {
   try {
     console.log(req.file);
     if (!req.user.restaurantName) {
@@ -206,22 +197,28 @@ exports.createProfileImgPending = async (req, res, next) => {
       return;
     }
 
-    if (req.file) {
-      console.log(req.file);
-      // const url = await upload(req.files.profileImg[0].path);
-      // const pending = await prisma.restaurantPendingEdit.update({
-      //   data: {
-      //     profileImg: url,
-      //   },
-      //   where: {
-      //     id: value.pendingId,
-      //   },
-      // });
-      res.status(201).json(pending);
+    if (req.files) {
+      for (let x of req.files) {
+        console.log("araiwa", x);
+        const images = await upload(x.path);
+        console.log("imagesss", images);
+        await prisma.restaurantImage.create({
+          data: {
+            url: images,
+            restaurantId: req.user.id,
+          },
+        });
+      }
     }
   } catch (err) {
     console.log(err);
     next(err);
+  } finally {
+    if (req.files) {
+      for (let x of req.files) {
+        fs.unlink(x.path);
+      }
+    }
   }
 };
 
