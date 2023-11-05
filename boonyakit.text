@@ -1,0 +1,51 @@
+
+/auth
+router.post('/register/:usertype', authController.register);
+===
+usertype
+    customer
+    restaurant
+===
+req:
+    customer:{
+            "firstName":"dassadasd",
+            "lastName":"asdasdas",
+            "email":"aaaajj@gg.com",
+            "phone": "1222222222",
+            "password": "123456Ab",
+            "confirmPassword": "123456Ab"
+
+    }
+    //password 1234
+    restaurant:{
+        "restaurantName": "banane",
+        "ownerFirstName": "data.ownerFirstName",
+        "ownerLastName": "data.ownerLastName",
+        "email": "aaaasdahhg@gg.com",
+        "phone": "1123456789",
+        "latitude": 123.33,
+        "longitude": 2.22,
+        "price": 5555,
+        "categoryIndex": 1,
+        "districtIndex": 1,
+        "nationIndex": 1
+    }
+
+
+router.post('/create/admin', authController.createAdmin);
+req:{
+        "email": "banane@gmail.com",
+        "password": "12345"
+}
+
+router.post('/login', authController.login);
+req:{
+            "emailOrPhone": "1123456789",
+            "password": "1234"
+}
+
+router.get("/user",authenticatedMiddleware,authController.getUser);
+req:header Bearer Token
+
+===
+
