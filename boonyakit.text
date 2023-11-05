@@ -1,6 +1,7 @@
 
 /auth
 router.post('/register/:usertype', authController.register);
+http://localhost:8888/auth/register/:usertype
 ===
 usertype
     customer
@@ -31,21 +32,33 @@ req:
         "nationIndex": 1
     }
 
-
+http://localhost:8888/auth/create/admin
 router.post('/create/admin', authController.createAdmin);
 req:{
         "email": "banane@gmail.com",
         "password": "12345"
 }
-
+http://localhost:8888/auth/login
 router.post('/login', authController.login);
 req:{
             "emailOrPhone": "1123456789",
             "password": "1234"
 }
-
+http://localhost:8888/auth/user
 router.get("/user",authenticatedMiddleware,authController.getUser);
 req:header Bearer Token
 
 ===
+booking
+http://localhost:8888/booking/create
+req:{
+            "packageId":1,
+            "restaurantId":"07221817-68c1-4604-b9da-a0f9ede51424",
+            "bookingDate":"11/4/2023",
+            "bookingTime":"20:00",
+            "totalKid":0,
+            "totalCustomer":3,
+            "paymentStatus":0
+
+}
 
