@@ -1,25 +1,137 @@
 const prisma = require("../models/prisma");
-// model Booking {
-//     id            String     @id
-//     customerId    String
-//     customer      Customer   @relation(fields: [customerId], references: [id])
-//     restaurantId  String
-//     restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
-//     orderStatus   Int 
-//     paymentStatus Int
-//     totalCustomer Int
-//     totalKid      Int
-//     createdAt     DateTime   @default(now())
-//     bookingTime   DateTime
-//     Payment       Payment[]
-//     ChatRoom      ChatRoom[]
-//   }
+const paymentMiddleware = require("../middleware/paymentMiddleware");
+const createError = require("../utils/create-error");
+//booking
+// id             String     @id @default(uuid())
+// customerId     String
+// customer       Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+// restaurantId   String
+// restaurant     Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+// orderStatus    Int        @default(0)
+// payment        Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+// paymentId      String
+// package        Package    @relation(fields: [packageId], references: [id])
+// packageId      Int
+// totalCustomer  Int
+// totalKid       Int        @default(0)
+// specialRequest String?
+// createdAt      DateTime   @default(now())
+// bookingDate    String
+// bookingTime    String
+// ChatRooms      ChatRoom[]
+  
+//==use==
+//create post | useAuthMiddleware
+const customerCreateBooking =async(req,res,next)=>{
+    try{
+        const data = req.body; //
+        console.log(data);
+        const packageId = data.packageId;
+        const customer = req.user;
+        const restaurantId = data.restaurantId;
+        const bookingDate = data.bookingDate;
+        const bookingTime = data.bookingTime;
+        const specialRequest = data.specialRequest;
+        const totalKid = data.totalKid;
+        const totalCustomer = data.totalCustomer;
+        const paymentStatus = data.paymentStatus;
+        //validate
 
-// model Payment {
-//     id            String    @id @default(uuid())
-//     paymentStatus Int       @default(1)
-//     Booking       Booking[]
-//   }
+        //validate
+
+        //find package
+        const selectPackage = await prisma.package.findFirst({
+            where:{ 
+                id:packageId
+            }
+        });
+        //check package
+        if(!selectPackage){
+            return next(createError("not found this package",404));
+        }
+
+        
+        //Validate CustomerBookingData
+        
+        //Validate CustomerBookingData
+        
+        const payment = await paymentMiddleware.createPaymentFunction(paymentStatus,next);
+        //create booking
+        const newBooking =  await prisma.booking.create({
+            data:{
+                customerId:customer.id,
+                restaurantId:restaurantId,
+                paymentId:payment.id,
+                packageId:selectPackage.id,
+                totalCustomer:totalCustomer,
+                totalKid:totalKid,
+                specialRequest:specialRequest||"",
+                bookingDate:bookingDate,
+                bookingTime:bookingTime,
+            }
+        });
+
+        res.status(200).json({message:"create complete",newBooking})
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+
+
+const adminEditBooking = async(req,res,next)=>{
+    try{
+        const data = req.body.data;
+        const bookingId = req.body.bookingId
+
+        const editBooking = await prisma.booking.update({
+            where:{
+                id:bookingId
+            },
+            data:data//match by key
+        });
+
+        res.status(200).json({message:"edit complete",editBooking});
+    }
+    catch(error){
+        next(error);
+    }
+}
+//For===payment controller===
+const editPayment = async(req,res,next)=>{
+    try{
+
+        const data = req.body;
+        const paymentId  = data.paymentId;
+        const status = data.status;
+
+        const check  = await prisma.payment.findFirst({
+            where:{
+                id:paymentId
+            }
+        });
+
+        //check
+        if(!check) next(createError("dont have this payment Id",404));
+
+        const paymentUpdated = await prisma.payment.update({
+            where:{
+                id:paymentId
+            },
+            data:{
+                paymentStatus:status
+            }
+        });
+        
+        res.status(200).json({message:"update complete",paymentUpdated});
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+//===before===
 
 //get by customerId
 const getBookingByCustomerId = async(req,res,next)=>{
@@ -86,44 +198,7 @@ const getBookingByStatus = async(req,res,next)=>{
         next(error);
     }
 }
-//post
-//create booking
-//userBooking
-const userBooking =async(req,res,next)=>{
-    try{
-//     id            String     @id
-//     customerId    String
-//     customer      Customer   @relation(fields: [customerId], references: [id])
-//     restaurantId  String
-//     restaurant    Restaurant @relation(fields: [restaurantId], references: [id])
-//     orderStatus   Int 
-//     paymentStatus Int
-//     totalCustomer Int
-//     totalKid      Int
-//     createdAt     DateTime   @default(now())
-//     bookingTime   DateTime
-//     Payment       Payment[]
-//     ChatRoom      ChatRoom[]
 
-        const restaurantId = req.body.restaurantId;
-        const customerId = req.body.userId;
-        const totalCustomer = req.body.totalCustomer;
-        const createdBooking = await prisma.booking.create({
-            data:{
-                customerId:customerId,
-                restaurantId:restaurantId,
-                totalCustomer:totalCustomer
-            }
-        });
-
-        res.status(200).json({message:"create Booking",createdBooking});
-
-    }
-    catch(error){
-        next(error);
-
-    }
-}
 
 //delete booking
 const deleteBookingById = async(req,res,next)=>{
@@ -171,8 +246,9 @@ exports.updateOrderStatusByBookingId = updateOrderStatusByBookingId;
 exports.getBookingByCustomerId = getBookingByCustomerId;
 exports.getBookingByStatus = getBookingByStatus;
 exports.deleteBookingById = deleteBookingById;
-exports.userBooking = userBooking;
 exports.getAllBooking = getAllBooking;
 exports.getBookingByRestaurantId = getBookingByRestaurantId;
+exports.adminEditBooking = adminEditBooking;
+exports.customerCreateBooking = customerCreateBooking;
 
 // exports.updatePaymentStatus = updatePaymentStatus;
