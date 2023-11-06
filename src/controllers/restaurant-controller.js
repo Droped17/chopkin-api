@@ -159,7 +159,7 @@ exports.createEditPending = async (req, res, next) => {
       businessTime,
       latitude,
       longitude,
-    } = req.body.info;
+    } = req.body;
     const data = {
       restaurantName: restaurantName,
       price: price,
@@ -172,6 +172,7 @@ exports.createEditPending = async (req, res, next) => {
     };
 
     if (req.file) {
+      console.log("IMG ===>", req.file);
       const url = await upload(req.file.path);
       data.profileImg = url;
     }
@@ -179,8 +180,8 @@ exports.createEditPending = async (req, res, next) => {
     const pendingOutput = await prisma.restaurantPendingEdit.create({
       data: data,
     });
-
-    const businessTimeData = businessTime.map(
+    const parsedBusinessTime = JSON.parse(businessTime);
+    const businessTimeData = parsedBusinessTime.map(
       (x) => (x.restaurantPendingEditId = pendingOutput.id)
     );
     const businessTimeOutput = await prisma.tempBusinessTime.createMany({
@@ -365,7 +366,7 @@ exports.mergeResInfo = async (req, res, next) => {
       businessTime,
       latitude,
       longitude,
-    } = req.body.info;
+    } = req.body;
     const data = {
       restaurantName: restaurantName,
       price: price,
@@ -391,7 +392,7 @@ exports.mergeResInfo = async (req, res, next) => {
     });
     if (req.body.businessTime) {
       await prisma.businessTime.updateMany({
-        data: businessTime,
+        data: JSON.parse(businessTime),
         where: {
           restaurantId: value.resId,
         },
@@ -400,5 +401,9 @@ exports.mergeResInfo = async (req, res, next) => {
     res.status(201).json("Updated restaurant successfully", resInfo);
   } catch (err) {
     next(err);
+  } finally {
+    if (req.file) {
+      fs.unlink(req.file.path);
+    }
   }
 };
