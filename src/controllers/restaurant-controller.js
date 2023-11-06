@@ -157,6 +157,8 @@ exports.createEditPending = async (req, res, next) => {
       districtIndex,
       nationIndex,
       businessTime,
+      latitude,
+      longitude,
     } = req.body.info;
     const data = {
       restaurantName: restaurantName,
@@ -165,6 +167,8 @@ exports.createEditPending = async (req, res, next) => {
       categoryIndex: categoryIndex,
       districtIndex: districtIndex,
       nationIndex: nationIndex,
+      latitude: latitude,
+      longitude: longitude,
     };
 
     if (req.file) {
