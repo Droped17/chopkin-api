@@ -35,4 +35,10 @@ router.patch(
   resController.updateResStatus
 ); // UPDATE RESTAURANT STATUS
 
+router.patch(
+  "/mergeResInfo/:resId",
+  authenticatedMw,
+  resController.mergeResInfo
+);
+
 module.exports = router;

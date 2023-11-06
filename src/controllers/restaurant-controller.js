@@ -231,7 +231,6 @@ exports.createResImgPending = async (req, res, next) => {
       }
     }
   } catch (err) {
-    console.log(err);
     next(err);
   } finally {
     if (req.files) {
@@ -247,9 +246,7 @@ exports.getEditPending = async (req, res, next) => {
     if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
-    const pendingEdit = await prisma.restaurant.findMany({
-      include: RestaurantPendingEdits,
-    });
+    const pendingEdit = await prisma.restaurantPendingEdit.findMany();
     res.status(200).json(pendingEdit);
   } catch (err) {
     console.log(err);
@@ -290,6 +287,9 @@ exports.deleteEditPending = async (req, res, next) => {
 
 exports.updateResStatus = async (req, res, next) => {
   try {
+    if (!req.user.isAdmin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const { error, value } = resIdSchema.validate(req.params);
     if (error) {
       next(error);
@@ -333,6 +333,62 @@ exports.updateResStatus = async (req, res, next) => {
     }
   } catch (err) {
     console.log(err);
+    next(err);
+  }
+};
+
+exports.mergeResInfo = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      return next(createError("You're unauthorized", 401));
+    }
+    const { error, value } = resIdSchema.validate(req.params);
+    if (error) {
+      return next(error);
+    }
+    const {
+      restaurantName,
+      price,
+      categoryIndex,
+      districtIndex,
+      nationIndex,
+      businessTime,
+      latitude,
+      longitude,
+    } = req.body.info;
+    const data = {
+      restaurantName: restaurantName,
+      price: price,
+      restaurantId: value.resId,
+      categoryIndex: categoryIndex,
+      districtIndex: districtIndex,
+      nationIndex: nationIndex,
+      latitude: latitude,
+      longitude: longitude,
+    };
+    if (req.file) {
+      const url = await upload(req.file.path);
+      data.profileImg = url;
+    }
+    const resInfo = await prisma.restaurant.update({
+      data: data,
+      where: {
+        id: value.resId,
+      },
+      include: {
+        RestaurantImages: true,
+      },
+    });
+    if (req.body.businessTime) {
+      await prisma.businessTime.updateMany({
+        data: businessTime,
+        where: {
+          restaurantId: value.resId,
+        },
+      });
+    }
+    res.status(201).json("Updated restaurant successfully", resInfo);
+  } catch (err) {
     next(err);
   }
 };
