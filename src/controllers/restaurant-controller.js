@@ -222,7 +222,7 @@ exports.createResImgPending = async (req, res, next) => {
         console.log("araiwa", x);
         const images = await upload(x.path);
         console.log("imagesss", images);
-        await prisma.restaurantImage.create({
+        await prisma.tempRestaurantImage.create({
           data: {
             url: images,
             restaurantId: req.user.id,

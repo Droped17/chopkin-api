@@ -96,6 +96,7 @@ model Package {
   name         String
   detail       String
   price        Int
+  status       Int        @default(0)
   img          String?
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
@@ -107,6 +108,7 @@ model PackageEditPending {
   name         String
   detail       String
   price        Int
+  status       Int        @default(0)
   img          String?
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)

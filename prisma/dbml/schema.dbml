@@ -84,6 +84,7 @@ Table Package {
   name String [not null]
   detail String [not null]
   price Int [not null]
+  status Int [not null, default: 0]
   img String
   restaurantId String [not null]
   restaurant Restaurant [not null]
@@ -95,6 +96,7 @@ Table PackageEditPending {
   name String [not null]
   detail String [not null]
   price Int [not null]
+  status Int [not null, default: 0]
   img String
   restaurantId String [not null]
   restaurant Restaurant [not null]

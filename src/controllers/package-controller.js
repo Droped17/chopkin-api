@@ -7,27 +7,37 @@ upload;
 
 exports.createPackage = async (req, res, next) => {
   try {
+    if (!req.user.isAdmin) {
+      return next(createError("You're unauthorized", 401));
+    }
+
     const { error, value } = resIdSchema(req.params);
     if (error) {
       next(error);
+      return;
     }
-    const response = {};
-    const { name, detail, price } = req.body;
+    const { name, detail, price, status } = req.body;
     const data = {
       name: name,
       detail: detail,
       price: price,
       restaurantId: value.resId,
+      status: 1,
     };
     if (req.file) {
-      const url = await upload(req.file[0].url);
+      const url = await upload(req.file.path);
       data.img = url;
     }
+
     const package = await prisma.package.create({
       data: data,
     });
-    response.package = package;
-    res.status(201).json(response);
+    // if (package.status === 0) {
+    //   await prisma.package.update({
+    //     status: 1,
+    //   });
+    // }
+    res.status(201).json(package);
   } catch (err) {
     next(err);
   }
@@ -43,6 +53,7 @@ exports.getPackageByRes = async (req, res, next) => {
     const packages = await prisma.package.findMany({
       where: {
         restaurantId: value.resId,
+        status: 1,
       },
     });
     res.status(200).json(packages);
@@ -64,7 +75,8 @@ exports.createPackageEditPending = async (req, res, next) => {
       restaurantId: req.user.id,
     };
     if (req.file) {
-      const url = await upload(req.file[0].path);
+      console.log(req.file);
+      const url = await upload(req.file.path);
       data.img = url;
     }
     const edit = await prisma.packageEditPending.create({
@@ -75,13 +87,16 @@ exports.createPackageEditPending = async (req, res, next) => {
     next(err);
   } finally {
     if (req.file) {
-      fs.unlink(req.file[0].path);
+      fs.unlink(req.file.path);
     }
   }
 };
 
 exports.deletePackage = async (req, res, next) => {
   try {
+    if (!req.user.isAdmin) {
+      return next(createError("You're unauthorized", 401));
+    }
     const { error, value } = packageIdSchema(req.params);
     if (error) {
       next(error);
@@ -109,6 +124,9 @@ exports.deletePackage = async (req, res, next) => {
 
 exports.updateStatus = async (req, res, next) => {
   try {
+    if (!req.user.isAdmin) {
+      next(createError("You're unauthorized.", 401));
+    }
     const { error, value } = packageIdSchema(req.params);
     if (error) {
       next(error);
@@ -146,6 +164,18 @@ exports.updateStatus = async (req, res, next) => {
         .status(200)
         .json({ message: "Package has been shown on the website." });
     }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getEditPending = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      return next(createError("You're unauthorized", 401));
+    }
+    const pendingPackages = await prisma.packageEditPending.findMany();
+    res.status(200).json(pendingPackages);
   } catch (err) {
     next(err);
   }

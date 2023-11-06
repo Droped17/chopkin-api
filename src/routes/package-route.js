@@ -18,4 +18,9 @@ router.post(
   packageController.createPackageEditPending
 );
 
+router.get(
+  "/getEditPending",
+  authenticatedMw,
+  packageController.getEditPending
+);
 module.exports = router;
