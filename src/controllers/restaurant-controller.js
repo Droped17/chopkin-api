@@ -246,7 +246,17 @@ exports.getEditPending = async (req, res, next) => {
     if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
-    const pendingEdit = await prisma.restaurantPendingEdit.findMany();
+    const pendingEdit = await prisma.restaurantPendingEdit.findMany({
+      include: {
+        tempBusinessTimes: true,
+        tempRestaurantImages: {
+          select: {
+            id: true,
+            url: true,
+          },
+        },
+      },
+    });
     res.status(200).json(pendingEdit);
   } catch (err) {
     console.log(err);
