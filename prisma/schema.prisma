@@ -58,7 +58,7 @@ model Restaurant {
   Packages               Package[]
   BusinessTimes          BusinessTime[]
   RestaurantPendingEdits RestaurantPendingEdit[]
-  PackageEditPendings    PackageEditPending[]
+  PackagePendings        PackagePending[]
 }
 
 model RestaurantPendingEdit {
@@ -103,7 +103,7 @@ model Package {
   Booking      Booking[]
 }
 
-model PackageEditPending {
+model PackagePending {
   id           Int        @id @default(autoincrement())
   name         String
   detail       String

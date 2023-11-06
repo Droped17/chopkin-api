@@ -169,12 +169,12 @@ exports.updateStatus = async (req, res, next) => {
   }
 };
 
-exports.getEditPending = async (req, res, next) => {
+exports.getPackagePending = async (req, res, next) => {
   try {
     if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
-    const pendingPackages = await prisma.packageEditPending.findMany();
+    const pendingPackages = await prisma.packagePending.findMany();
     res.status(200).json(pendingPackages);
   } catch (err) {
     next(err);
