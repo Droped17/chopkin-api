@@ -15,7 +15,7 @@ const createPaymentFunction = async(paymentStatus,next)=>{
         console.log(paymentStatus)
         const payment = await prisma.payment.create({
             data:{
-                paymentStatus:(paymentStatus===0?paymentStatus:1)
+                paymentStatus:(paymentStatus?paymentStatus:0)
             }
         });
         return payment;
