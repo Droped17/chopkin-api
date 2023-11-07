@@ -20,11 +20,12 @@ exports.createPackage = async (req, res, next) => {
       next(error);
       return;
     }
-    const { name, detail, price, status } = req.body;
+    const { name, detail, price, status, img } = req.body;
     const data = {
       name: name,
       detail: detail,
       price: price,
+      img: img,
       restaurantId: value.resId,
       status: 1,
     };
