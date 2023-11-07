@@ -24,4 +24,10 @@ router.delete(
   authenticatedMw,
   packageController.deletePending
 );
+
+router.patch(
+  "/updateStatus/:packageId",
+  authenticatedMw,
+  packageController.updateStatus
+);
 module.exports = router;
