@@ -1,8 +1,9 @@
 const prisma = require("../models/prisma");
-const paymentMiddleware = require("../middleware/paymentMiddleware");
 const createError = require("../utils/create-error");
+const paymentMiddleware = require("../middleware/paymentMiddleware");
+const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
 
-
+//post
 const updatePaymentByBookingId = async(req,res,next)=>{
     try{
         const bookingId = req.body.bookingId;
@@ -35,8 +36,18 @@ const updatePaymentByBookingId = async(req,res,next)=>{
         next(error);
     }
 }
+const checkoutByBookingId = async(req,res,next)=>{
+    try{
+        // const session = await 
+    }
+    catch(error){
+        next(error);
+    }
+}
 
 //delete cascade
+
+exports.updatePaymentByBookingId = updatePaymentByBookingId;
 
 // app.post("/checkout/card", async (req, res,next) => {
 //     try {
