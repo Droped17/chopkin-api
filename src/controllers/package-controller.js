@@ -64,7 +64,7 @@ exports.createPackagePending = async (req, res, next) => {
       return next(createError("You're unauthorized", 401));
     }
     console.log(req.body);
-    const { name, detail, price } = req.body;
+    const { name, detail, price } = JSON.parse(req.body.info);
     const data = {
       name: name,
       detail: detail,
