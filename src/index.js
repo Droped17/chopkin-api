@@ -12,6 +12,7 @@ const authRoute = require("../src/routes/auth-route");
 const packageRoute = require("../src/routes/package-route");
 const reviewRoute = require('./routes/review-route');
 const bookingRoute = require("./routes/booking-route");
+const customerRoute = require('./routes/customer-route')
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -24,6 +25,7 @@ app.use("/package", packageRoute);
 app.use("/auth", authRoute);
 app.use('/review', reviewRoute);
 app.use("/booking",bookingRoute);
+app.use('/userprofile', customerRoute)
 
 app.use(notFoundMiddleware);
 app.use(errorMw);
