@@ -366,21 +366,19 @@ exports.mergeResInfo = async (req, res, next) => {
       businessTime,
       latitude,
       longitude,
+      profileImg,
     } = req.body;
     const data = {
       restaurantName: restaurantName,
       price: price,
       restaurantId: value.resId,
+      profileImg: profileImg,
       categoryIndex: categoryIndex,
       districtIndex: districtIndex,
       nationIndex: nationIndex,
       latitude: latitude,
       longitude: longitude,
     };
-    if (req.file) {
-      const url = await upload(req.file.path);
-      data.profileImg = url;
-    }
     const resInfo = await prisma.restaurant.update({
       data: data,
       where: {
@@ -401,9 +399,5 @@ exports.mergeResInfo = async (req, res, next) => {
     res.status(201).json("Updated restaurant successfully", resInfo);
   } catch (err) {
     next(err);
-  } finally {
-    if (req.file) {
-      fs.unlink(req.file.path);
-    }
   }
 };
