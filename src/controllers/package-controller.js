@@ -57,11 +57,12 @@ exports.getPackageByRes = async (req, res, next) => {
   }
 };
 
-exports.createPackageEditPending = async (req, res, next) => {
+exports.createPackagePending = async (req, res, next) => {
   try {
     if (!req.user.restaurantName) {
       return next(createError("You're unauthorized", 401));
     }
+    console.log(req.body);
     const { name, detail, price } = req.body;
     const data = {
       name: name,
@@ -74,11 +75,11 @@ exports.createPackageEditPending = async (req, res, next) => {
       const url = await upload(req.file.path);
       data.img = url;
     }
-    const edit = await prisma.packageEditPending.create({
+    const edit = await prisma.packagePending.create({
       data: data,
     });
     res.status(201).json(edit);
-  } catch {
+  } catch (err) {
     next(err);
   } finally {
     if (req.file) {

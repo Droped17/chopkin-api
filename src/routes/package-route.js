@@ -6,12 +6,12 @@ const packageController = require("../controllers/package-controller");
 const authenticatedMw = require("../middleware/authenticatedMiddleware");
 
 router.post("/create/:resId", authenticatedMw, packageController.createPackage);
-router.get("/", packageController.getPackageByRes);
+router.get("/getAll/:resId", packageController.getPackageByRes);
 router.post(
-  "/createEditPending",
+  "/createPending",
   authenticatedMw,
   upload.single("image"),
-  packageController.createPackageEditPending
+  packageController.createPackagePending
 );
 
 router.get(
