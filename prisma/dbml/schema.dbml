@@ -124,7 +124,7 @@ Table Booking {
 
 Table Payment {
   id String [pk]
-  paymentStatus Int [not null, default: 1]
+  paymentStatus Int [not null, default: 0]
   Bookings Booking [not null]
 }
 
