@@ -80,7 +80,7 @@ const customerCreateBooking =async(req,res,next)=>{
 
 
 
-const adminEditBooking = async(req,res,next)=>{
+const EditBooking = async(req,res,next)=>{
     try{
         const data = req.body.data;
         const bookingId = req.body.bookingId
@@ -198,7 +198,37 @@ const getBookingByStatus = async(req,res,next)=>{
         next(error);
     }
 }
+//get own Booking
+const getOwnBooking = async(req,res,next)=>{
+    try{
+        const my = req.user;
+        let allBooking = null;
 
+        if(my.restaurantName){
+            allBooking = await prisma.booking.findMany({
+                where:{
+                    restaurantId:my.id
+                }
+            });
+        }
+        else if(my.memberPoint){
+            allBooking = await prisma.booking.findMany({
+                where:{
+                    customerId:my.id
+                }
+            });
+        }
+        else{
+
+           return next(createError("not found",404));
+        }
+        res.status(200).json({message:"get success",allBooking})
+    
+    }   
+    catch(error){
+        next(error);
+    }
+}
 
 //delete booking
 const deleteBookingById = async(req,res,next)=>{
@@ -248,7 +278,8 @@ exports.getBookingByStatus = getBookingByStatus;
 exports.deleteBookingById = deleteBookingById;
 exports.getAllBooking = getAllBooking;
 exports.getBookingByRestaurantId = getBookingByRestaurantId;
-exports.adminEditBooking = adminEditBooking;
+exports.EditBooking = EditBooking;
 exports.customerCreateBooking = customerCreateBooking;
+exports.getOwnBooking = getOwnBooking;
 
 // exports.updatePaymentStatus = updatePaymentStatus;
