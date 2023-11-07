@@ -46,7 +46,7 @@ Table Restaurant {
   Packages Package [not null]
   BusinessTimes BusinessTime [not null]
   RestaurantPendingEdits RestaurantPendingEdit [not null]
-  PackageEditPendings PackageEditPending [not null]
+  PackagePendings PackagePending [not null]
 }
 
 Table RestaurantPendingEdit {
@@ -84,17 +84,19 @@ Table Package {
   name String [not null]
   detail String [not null]
   price Int [not null]
+  status Int [not null, default: 0]
   img String
   restaurantId String [not null]
   restaurant Restaurant [not null]
   Booking Booking [not null]
 }
 
-Table PackageEditPending {
+Table PackagePending {
   id Int [pk, increment]
   name String [not null]
   detail String [not null]
   price Int [not null]
+  status Int [not null, default: 0]
   img String
   restaurantId String [not null]
   restaurant Restaurant [not null]
@@ -183,7 +185,7 @@ Ref: TempRestaurantImage.restaurantPendingEditId > RestaurantPendingEdit.id
 
 Ref: Package.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: PackageEditPending.restaurantId > Restaurant.id [delete: Cascade]
+Ref: PackagePending.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Booking.customerId > Customer.id [delete: Cascade]
 

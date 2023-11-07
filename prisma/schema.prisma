@@ -58,7 +58,7 @@ model Restaurant {
   Packages               Package[]
   BusinessTimes          BusinessTime[]
   RestaurantPendingEdits RestaurantPendingEdit[]
-  PackageEditPendings    PackageEditPending[]
+  PackagePendings        PackagePending[]
 }
 
 model RestaurantPendingEdit {
@@ -96,17 +96,19 @@ model Package {
   name         String
   detail       String
   price        Int
+  status       Int        @default(0)
   img          String?
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   Booking      Booking[]
 }
 
-model PackageEditPending {
+model PackagePending {
   id           Int        @id @default(autoincrement())
   name         String
   detail       String
   price        Int
+  status       Int        @default(0)
   img          String?
   restaurantId String
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)

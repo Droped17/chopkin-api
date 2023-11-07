@@ -20,7 +20,7 @@ router.post(
 router.patch(
   "/createResImgPending/:pendingId",
   authenticatedMw,
-  upload.array("image"),
+  upload.array("image", 10),
   resController.createResImgPending
 );
 router.get("/getPendingEdit", authenticatedMw, resController.getEditPending); // GET ALL EDIT PENDINGS
@@ -34,5 +34,11 @@ router.patch(
   authenticatedMw,
   resController.updateResStatus
 ); // UPDATE RESTAURANT STATUS
+
+router.patch(
+  "/mergeResInfo/:resId",
+  authenticatedMw,
+  resController.mergeResInfo
+); // update res info with temp info
 
 module.exports = router;
