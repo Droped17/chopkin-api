@@ -3,14 +3,41 @@ const paymentMiddleware = require("../middleware/paymentMiddleware");
 const createError = require("../utils/create-error");
 
 
-const updatePaymentByBookingId = (req,res,next)=>{
+const updatePaymentByBookingId = async(req,res,next)=>{
     try{
+        const bookingId = req.body.bookingId;
+        const paymentStatus = req.body.paymentStatus;//0,1
 
+        const checkBooking = await prisma.booking.findFirst({
+            where:{
+                id:bookingId
+            }
+        });
+        
+        if(!checkBooking) return next(createError("not found this booking",404));
+
+        //stripe pay
+
+        let url = "";
+        //update
+        const paymentUpdate = await prisma.payment.update({
+            where:{
+                id:checkBooking.paymentId
+            },
+            data:{
+                paymentStatus:paymentStatus
+            }
+        });
+
+        res.status(200).json({message:"update payment to:"+paymentStatus,paymentUpdate});
     }
     catch(error){
         next(error);
     }
 }
+
+//delete cascade
+
 // app.post("/checkout/card", async (req, res,next) => {
 //     try {
 //       const session = await stripe.checkout.sessions.create({
