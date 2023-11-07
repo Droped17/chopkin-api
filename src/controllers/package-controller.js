@@ -2,7 +2,11 @@ const { upload } = require("../config/cloudinaryService");
 const prisma = require("../models/prisma");
 const fs = require("fs/promises");
 const createError = require("../utils/create-error");
-const { resIdSchema, packageIdSchema } = require("../validators/res-validator");
+const {
+  resIdSchema,
+  packageIdSchema,
+  pendingIdSchema,
+} = require("../validators/res-validator");
 upload;
 
 exports.createPackage = async (req, res, next) => {
@@ -11,7 +15,7 @@ exports.createPackage = async (req, res, next) => {
       return next(createError("You're unauthorized", 401));
     }
 
-    const { error, value } = resIdSchema(req.params);
+    const { error, value } = resIdSchema.validate(req.params);
     if (error) {
       next(error);
       return;
@@ -24,19 +28,10 @@ exports.createPackage = async (req, res, next) => {
       restaurantId: value.resId,
       status: 1,
     };
-    if (req.file) {
-      const url = await upload(req.file.path);
-      data.img = url;
-    }
 
     const package = await prisma.package.create({
       data: data,
     });
-    // if (package.status === 0) {
-    //   await prisma.package.update({
-    //     status: 1,
-    //   });
-    // }
     res.status(201).json(package);
   } catch (err) {
     next(err);
@@ -176,6 +171,37 @@ exports.getPackagePending = async (req, res, next) => {
     }
     const pendingPackages = await prisma.packagePending.findMany();
     res.status(200).json(pendingPackages);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deletePending = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      next(createError("You're unauthorized.", 401));
+      return;
+    }
+    const { error, value } = pendingIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+    const foundPack = await prisma.packagePending.findFirst({
+      where: {
+        id: value.pendingId,
+      },
+    });
+    if (!foundPack) {
+      next(createError("Package doesn't exist", 404));
+      return;
+    }
+    await prisma.packagePending.delete({
+      where: {
+        id: foundPack.id,
+      },
+    });
+    res.status(200).json({ message: "Pending has been deleted" });
   } catch (err) {
     next(err);
   }
