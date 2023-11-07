@@ -121,7 +121,7 @@ exports.deletePackage = async (req, res, next) => {
 
 exports.updateStatus = async (req, res, next) => {
   try {
-    if (!req.user.isAdmin) {
+    if (!req.user.restaurantName) {
       next(createError("You're unauthorized.", 401));
     }
     const { error, value } = packageIdSchema(req.params);
