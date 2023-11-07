@@ -99,37 +99,37 @@ const EditBooking = async(req,res,next)=>{
     }
 }
 //For===payment controller===
-const editPayment = async(req,res,next)=>{
-    try{
+// const editPayment = async(req,res,next)=>{
+//     try{
 
-        const data = req.body;
-        const paymentId  = data.paymentId;
-        const status = data.status;
+//         const data = req.body;
+//         const paymentId  = data.paymentId;
+//         const status = data.status;
 
-        const check  = await prisma.payment.findFirst({
-            where:{
-                id:paymentId
-            }
-        });
+//         const check  = await prisma.payment.findFirst({
+//             where:{
+//                 id:paymentId
+//             }
+//         });
 
-        //check
-        if(!check) next(createError("dont have this payment Id",404));
+//         //check
+//         if(!check) next(createError("dont have this payment Id",404));
 
-        const paymentUpdated = await prisma.payment.update({
-            where:{
-                id:paymentId
-            },
-            data:{
-                paymentStatus:status
-            }
-        });
+//         const paymentUpdated = await prisma.payment.update({
+//             where:{
+//                 id:paymentId
+//             },
+//             data:{
+//                 paymentStatus:status
+//             }
+//         });
         
-        res.status(200).json({message:"update complete",paymentUpdated});
-    }
-    catch(error){
-        next(error);
-    }
-}
+//         res.status(200).json({message:"update complete",paymentUpdated});
+//     }
+//     catch(error){
+//         next(error);
+//     }
+// }
 
 //===before===
 

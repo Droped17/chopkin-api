@@ -1,13 +1,37 @@
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
-const paymentMiddleware = require("../middleware/paymentMiddleware");
+// const paymentMiddleware = require("../middleware/paymentMiddleware");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
+
+const getPaymentByBookingId = async(req,res,next)=>{
+    try{
+        const bookingId = req.params.bookingId;
+
+        const booking  = await prisma.booking.findFirst({
+            where:{
+                id:bookingId
+            },
+            include:{
+                payment:true
+            }
+        });
+
+        if(!booking){
+            return next(createError("dont have this bookingId"));
+        }
+
+        res.status(200).json({message:"get payment",booking});
+    }
+    catch(error){
+        next(error);
+    }
+}
 
 //post
 const updatePaymentByBookingId = async(req,res,next)=>{
     try{
         const bookingId = req.body.bookingId;
-        const paymentStatus = req.body.paymentStatus;//0,1
+        const paymentStatus = +req.body.paymentStatus;//0,1
 
         const checkBooking = await prisma.booking.findFirst({
             where:{
@@ -17,9 +41,12 @@ const updatePaymentByBookingId = async(req,res,next)=>{
         
         if(!checkBooking) return next(createError("not found this booking",404));
 
-        //stripe pay
+        //use stripe pay
+        const url = await checkoutByBookingId(req,res,next);
+        
+        //check url
+        console.log(url);
 
-        let url = "";
         //update
         const paymentUpdate = await prisma.payment.update({
             where:{
@@ -30,15 +57,37 @@ const updatePaymentByBookingId = async(req,res,next)=>{
             }
         });
 
-        res.status(200).json({message:"update payment to:"+paymentStatus,paymentUpdate});
+        res.status(200).json({message:"update payment to:"+paymentStatus,paymentUpdate,url});
     }
     catch(error){
         next(error);
     }
 }
+
+//pay stripe
 const checkoutByBookingId = async(req,res,next)=>{
     try{
-        // const session = await 
+        const packageName = req.body.packageName;
+        const packagePrice = req.body.packagePrice;
+
+        const session = await stripe.checkout.session.create({
+            made:"payment",
+            line_items:{
+                price_data:{
+                    currency:"thb",
+                    product_data:{
+                        name:packageName
+                    },
+                    unit_amount :packagePrice
+                },
+                quantity:1,
+            },
+            success_url:"front_success_url",
+            cancel_url:"front_cancle_url",
+        });
+        
+        // res.status(200).json({message:"Pay Success",url:session.url});
+        return session.url;
     }
     catch(error){
         next(error);
@@ -48,30 +97,39 @@ const checkoutByBookingId = async(req,res,next)=>{
 //delete cascade
 
 exports.updatePaymentByBookingId = updatePaymentByBookingId;
+exports.getPaymentByBookingId = getPaymentByBookingId;
+// exports.checkoutByBookingId = checkoutByBookingId;
 
-// app.post("/checkout/card", async (req, res,next) => {
-//     try {
-//       const session = await stripe.checkout.sessions.create({
-//         // payment_method_types: ["card"],
-//         mode: "payment",
-//         line_items: req.body.items.map(item => {
-//           const product = products.get(item.id)
-//           return {
-//             price_data: {
-//               currency: "thb",
-//               product_data: {
-//                 name: product.name,
-//               },
-//               unit_amount: product.price,
+
+//edit paymentBy Id
+// const editPayment = async(req,res,next)=>{
+//     try{
+
+//         const data = req.body;
+//         const paymentId  = data.paymentId;
+//         const status = data.status;
+
+//         const check  = await prisma.payment.findFirst({
+//             where:{
+//                 id:paymentId
+//             }
+//         });
+
+//         //check
+//         if(!check) next(createError("dont have this payment Id",404));
+
+//         const paymentUpdated = await prisma.payment.update({
+//             where:{
+//                 id:paymentId
 //             },
-//             quantity: item.quantity,
-//           }
-//         }),
-//         success_url: `${process.env.CLIENT_URL}/stripe-checkout-vanilla/client/success.html`,
-//         cancel_url: `${process.env.CLIENT_URL}/stripe-checkout-vanilla/client/cancel.html`,
-//       })
-//       res.json({ url: session.url })
-//     } catch (e) {
-//       res.status(500).json({ error: e.message })
+//             data:{
+//                 paymentStatus:status
+//             }
+//         });
+        
+//         res.status(200).json({message:"update complete",paymentUpdated});
 //     }
-//   })
+//     catch(error){
+//         next(error);
+//     }
+// }
