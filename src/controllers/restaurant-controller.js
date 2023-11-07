@@ -371,7 +371,6 @@ exports.mergeResInfo = async (req, res, next) => {
     const data = {
       restaurantName: restaurantName,
       price: price,
-      restaurantId: value.resId,
       profileImg: profileImg,
       categoryIndex: categoryIndex,
       districtIndex: districtIndex,
@@ -389,14 +388,26 @@ exports.mergeResInfo = async (req, res, next) => {
       },
     });
     if (req.body.businessTime) {
-      await prisma.businessTime.updateMany({
-        data: JSON.parse(businessTime),
+      const parsedBusinessTime = JSON.parse(businessTime);
+      const foundTime = await prisma.businessTime.findMany({
         where: {
           restaurantId: value.resId,
         },
       });
+      if (foundTime) {
+        await prisma.businessTime.deleteMany({
+          where: {
+            restaurantId: value.resId,
+          },
+        });
+      }
+      const businessTimes = await prisma.businessTime.createMany({
+        data: parsedBusinessTime,
+      });
+      res
+        .status(201)
+        .json("Updated restaurant successfully", resInfo, businessTimes);
     }
-    res.status(201).json("Updated restaurant successfully", resInfo);
   } catch (err) {
     next(err);
   }
