@@ -7,6 +7,12 @@ const authenticatedMw = require("../middleware/authenticatedMiddleware");
 
 router.post("/create/:resId", authenticatedMw, packageController.createPackage);
 router.get("/getAll/:resId", packageController.getPackageByRes);
+router.get(
+  "/getEveryPackage",
+  authenticatedMw,
+  packageController.getEveryPackage
+);
+
 router.post(
   "/createPending",
   authenticatedMw,
@@ -30,4 +36,5 @@ router.patch(
   authenticatedMw,
   packageController.updateStatus
 );
+
 module.exports = router;

@@ -58,6 +58,19 @@ exports.getPackageByRes = async (req, res, next) => {
   }
 };
 
+exports.getEveryPackage = async (req, res, next) => {
+  try {
+    if (!req.user.restaurantName) {
+      next(createError("You're unauthorized", 401));
+      return;
+    }
+    const allPack = await prisma.package.findMany();
+    res.status(200).json(allPack);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.createPackagePending = async (req, res, next) => {
   try {
     if (!req.user.restaurantName) {
