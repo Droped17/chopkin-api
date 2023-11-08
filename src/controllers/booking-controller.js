@@ -174,7 +174,9 @@ const getBookingByRestaurantId = async(req,res,next)=>{
 //get all
 const getAllBooking = async(req,res,next)=>{
     try{
-        const allBooking = await prisma.booking.findMany();
+        const allBooking = await prisma.booking.findMany({
+    
+        });
         res.status(200).json({message:"Get All Booking",allBooking});
     }
     catch(error){
