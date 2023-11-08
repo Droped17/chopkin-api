@@ -124,7 +124,7 @@ exports.updateStatus = async (req, res, next) => {
     if (!req.user.restaurantName) {
       next(createError("You're unauthorized.", 401));
     }
-    const { error, value } = packageIdSchema(req.params);
+    const { error, value } = packageIdSchema.validate(req.params);
     if (error) {
       next(error);
       return;
