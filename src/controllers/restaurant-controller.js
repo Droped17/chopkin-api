@@ -181,7 +181,7 @@ exports.createEditPending = async (req, res, next) => {
       data: data,
     });
     const parsedBusinessTime = JSON.parse(businessTime).map((x) => {
-      return { ...x, restaurantId: pendingOutput.id };
+      return { ...x, restaurantPendingEditId: pendingOutput.id };
     });
     const businessTimeOutput = await prisma.tempBusinessTime.createMany({
       data: parsedBusinessTime,
