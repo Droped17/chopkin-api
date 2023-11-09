@@ -44,7 +44,7 @@ exports.getResById = async (req, res, next) => {
         Reviews: true,
         RestaurantImages: true,
         Packages: true,
-        BusinessTime: true,
+        BusinessTimes: true,
       },
     });
     res.status(200).json(restaurant);
