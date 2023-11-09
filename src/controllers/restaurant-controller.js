@@ -276,7 +276,7 @@ exports.deleteEditPending = async (req, res, next) => {
     }
     const foundPending = await prisma.restaurantPendingEdit.findFirst({
       where: {
-        id: value.resId,
+        id: value.pendingId,
       },
     });
     if (!foundPending) {
