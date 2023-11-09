@@ -180,12 +180,11 @@ exports.createEditPending = async (req, res, next) => {
     const pendingOutput = await prisma.restaurantPendingEdit.create({
       data: data,
     });
-    const parsedBusinessTime = JSON.parse(businessTime);
-    for (let x of parsedBusinessTime) {
-      x.restaurantId = req.user.id;
-    }
+    const parsedBusinessTime = JSON.parse(businessTime).map(
+      (x) => (x.restaurantId = req.user.id)
+    );
     const businessTimeOutput = await prisma.tempBusinessTime.createMany({
-      data: businessTimeData,
+      data: parsedBusinessTime,
     });
 
     res.status(201).json({
