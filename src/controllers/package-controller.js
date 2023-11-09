@@ -58,6 +58,23 @@ exports.getPackageByRes = async (req, res, next) => {
   }
 };
 
+exports.getEveryPackage = async (req, res, next) => {
+  try {
+    if (!req.user.restaurantName) {
+      next(createError("You're unauthorized", 401));
+      return;
+    }
+    const allPack = await prisma.package.findMany({
+      where: {
+        restaurantId: req.user.id,
+      },
+    });
+    res.status(200).json(allPack);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.createPackagePending = async (req, res, next) => {
   try {
     if (!req.user.restaurantName) {
@@ -94,7 +111,7 @@ exports.deletePackage = async (req, res, next) => {
     if (!req.user.isAdmin) {
       return next(createError("You're unauthorized", 401));
     }
-    const { error, value } = packageIdSchema(req.params);
+    const { error, value } = packageIdSchema.validate(req.params);
     if (error) {
       next(error);
       return;
@@ -124,7 +141,7 @@ exports.updateStatus = async (req, res, next) => {
     if (!req.user.restaurantName) {
       next(createError("You're unauthorized.", 401));
     }
-    const { error, value } = packageIdSchema(req.params);
+    const { error, value } = packageIdSchema.validate(req.params);
     if (error) {
       next(error);
       return;
