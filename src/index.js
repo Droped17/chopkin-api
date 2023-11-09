@@ -25,7 +25,7 @@ app.use("/package", packageRoute);
 app.use("/auth", authRoute);
 app.use("/review", reviewRoute);
 app.use("/booking", bookingRoute);
-app.use("/google");
+app.use("/google", googleRoute);
 
 app.use(notFoundMiddleware);
 app.use(errorMw);
