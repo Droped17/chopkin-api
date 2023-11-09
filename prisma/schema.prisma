@@ -87,7 +87,7 @@ model RestaurantImage {
 model TempRestaurantImage {
   id                      Int                   @id @default(autoincrement())
   url                     String
-  restaurantEditPending   RestaurantPendingEdit @relation(fields: [restaurantPendingEditId], references: [id])
+  restaurantEditPending   RestaurantPendingEdit @relation(fields: [restaurantPendingEditId], references: [id], onDelete: Cascade)
   restaurantPendingEditId Int
 }
 
@@ -123,7 +123,7 @@ model Booking {
   orderStatus    Int        @default(0)
   payment        Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
   paymentId      String
-  package        Package    @relation(fields: [packageId], references: [id])
+  package        Package    @relation(fields: [packageId], references: [id], onDelete: Cascade)
   packageId      Int
   totalCustomer  Int
   totalKid       Int        @default(0)
@@ -163,7 +163,7 @@ model ReviewImage {
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomIdBySocket String
-  admin          Admin?   @relation(fields: [adminId], references: [id])
+  admin          Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
   adminId        Int?
   customerId     String
   customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
@@ -185,6 +185,6 @@ model TempBusinessTime {
   day                     Int
   openTime                String
   closedTime              String
-  restaurantPendingEdit   RestaurantPendingEdit @relation(fields: [restaurantPendingEditId], references: [id])
+  restaurantPendingEdit   RestaurantPendingEdit @relation(fields: [restaurantPendingEditId], references: [id], onDelete: Cascade)
   restaurantPendingEditId Int
 }
