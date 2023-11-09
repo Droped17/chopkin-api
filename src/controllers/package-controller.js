@@ -64,7 +64,11 @@ exports.getEveryPackage = async (req, res, next) => {
       next(createError("You're unauthorized", 401));
       return;
     }
-    const allPack = await prisma.package.findMany();
+    const allPack = await prisma.package.findMany({
+      where: {
+        restaurantId: req.user.id,
+      },
+    });
     res.status(200).json(allPack);
   } catch (err) {
     next(err);
