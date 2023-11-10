@@ -3,7 +3,7 @@ const authenticatedMiddleware = require("../middleware/authenticatedMiddleware")
 const paymentController = require("../controllers/payment-controller");
 const router = express.Router();
 
-router.post("/pay",paymentController.checkoutBooking);
+router.post("/create-checkout-sessions",paymentController.checkoutBooking);
 
 
 module.exports = router;
