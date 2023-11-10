@@ -10,7 +10,7 @@ const authenticated = async(req,res,next)=>{
        
         //validate
         if(!authorization||!authorization.startsWith("Bearer ")){
-            return next(createError("something worng"),400);
+            return next(createError("something wrong",400));
         }
         const token = authorization.split("Bearer ")[1];
         

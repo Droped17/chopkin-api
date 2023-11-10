@@ -44,7 +44,7 @@ exports.getResById = async (req, res, next) => {
         Reviews: true,
         RestaurantImages: true,
         Packages: true,
-        BusinessTime: true,
+        BusinessTimes: true,
       },
     });
     res.status(200).json(restaurant);
@@ -163,7 +163,7 @@ exports.createEditPending = async (req, res, next) => {
     const data = {
       restaurantName: restaurantName,
       price: +price,
-      restaurantId: +req.user.id,
+      restaurantId: req.user.id,
       categoryIndex: +categoryIndex,
       districtIndex: +districtIndex,
       nationIndex: +nationIndex,
@@ -180,12 +180,11 @@ exports.createEditPending = async (req, res, next) => {
     const pendingOutput = await prisma.restaurantPendingEdit.create({
       data: data,
     });
-    const parsedBusinessTime = JSON.parse(businessTime);
-    for (let x of parsedBusinessTime) {
-      x.restaurantId = req.user.id;
-    }
+    const parsedBusinessTime = JSON.parse(businessTime).map((x) => {
+      return { ...x, restaurantPendingEditId: pendingOutput.id };
+    });
     const businessTimeOutput = await prisma.tempBusinessTime.createMany({
-      data: businessTimeData,
+      data: parsedBusinessTime,
     });
 
     res.status(201).json({
@@ -277,7 +276,7 @@ exports.deleteEditPending = async (req, res, next) => {
     }
     const foundPending = await prisma.restaurantPendingEdit.findFirst({
       where: {
-        id: value.resId,
+        id: value.pendingId,
       },
     });
     if (!foundPending) {

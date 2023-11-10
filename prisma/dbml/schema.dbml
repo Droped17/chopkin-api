@@ -181,7 +181,7 @@ Ref: RestaurantPendingEdit.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: RestaurantImage.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: TempRestaurantImage.restaurantPendingEditId > RestaurantPendingEdit.id
+Ref: TempRestaurantImage.restaurantPendingEditId > RestaurantPendingEdit.id [delete: Cascade]
 
 Ref: Package.restaurantId > Restaurant.id [delete: Cascade]
 
@@ -193,7 +193,7 @@ Ref: Booking.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: Booking.paymentId > Payment.id [delete: Cascade]
 
-Ref: Booking.packageId > Package.id
+Ref: Booking.packageId > Package.id [delete: Cascade]
 
 Ref: Review.restaurantId > Restaurant.id [delete: Cascade]
 
@@ -201,7 +201,7 @@ Ref: Review.customerId > Customer.id [delete: Cascade]
 
 Ref: ReviewImage.reviewId > Review.id [delete: Cascade]
 
-Ref: ChatRoom.adminId > Admin.id
+Ref: ChatRoom.adminId > Admin.id [delete: Cascade]
 
 Ref: ChatRoom.customerId > Customer.id [delete: Cascade]
 
@@ -209,4 +209,4 @@ Ref: ChatRoom.bookingId > Booking.id [delete: Cascade]
 
 Ref: BusinessTime.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: TempBusinessTime.restaurantPendingEditId > RestaurantPendingEdit.id
+Ref: TempBusinessTime.restaurantPendingEditId > RestaurantPendingEdit.id [delete: Cascade]

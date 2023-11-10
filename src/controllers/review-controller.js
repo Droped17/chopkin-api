@@ -51,7 +51,7 @@ exports.deleteReview = async (req, res, next) => {
     const existReview = await prisma.review.findFirst({
       where: {
         id: value.reviewId,
-        customerId: req.customer.id,
+        // customerId: req.customer.id,
       },
     });
 
@@ -64,6 +64,20 @@ exports.deleteReview = async (req, res, next) => {
       },
     });
     res.status(200).json({ message: "Deleted" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAllReviewByRestaurant = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const reviews = await prisma.review.findMany({
+      where: {
+        restaurantId: id,
+      },
+    });
+    res.status(200).json({ reviews });
   } catch (err) {
     next(err);
   }
