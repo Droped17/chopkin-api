@@ -11,4 +11,6 @@ router.patch(
   customerController.updateProfile
 );
 
+router.get("/getAll", authenticated, customerController.getAllCus);
+
 module.exports = router;
