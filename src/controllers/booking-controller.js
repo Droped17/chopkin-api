@@ -194,7 +194,7 @@ const getAllBooking = async(req,res,next)=>{
 //get by status
 const getBookingByStatus = async(req,res,next)=>{
     try{
-        const status = req.params.status;//0,1,2
+        const status = +req.params.status;//0,1,2
         const bookingByStatus = await prisma.booking.findMany({
             where:{
                 orderStatus:status
@@ -269,7 +269,7 @@ const updateOrderStatusByBookingId = async(req,res,next)=>{
     try{
         //update order status
         const bookingId = req.body.bookingId;
-        const orderStatusUpdate = req.body.status;//0,1,2
+        const orderStatusUpdate = +req.body.status;//0,1,2
 
         const bookingForUpdate = await prisma.booking.findFirst({
             where:{
