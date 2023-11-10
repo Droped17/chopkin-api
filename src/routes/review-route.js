@@ -14,5 +14,6 @@ router.post(
 );
 
 router.get("/:id", authenticated, reviewController.getAllReviewByRestaurant);
+router.delete("/:reviewId", authenticated, reviewController.deleteReview);
 
 module.exports = router;

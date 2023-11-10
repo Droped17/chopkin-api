@@ -51,7 +51,7 @@ exports.deleteReview = async (req, res, next) => {
     const existReview = await prisma.review.findFirst({
       where: {
         id: value.reviewId,
-        customerId: req.customer.id,
+        // customerId: req.customer.id,
       },
     });
 
