@@ -7,7 +7,7 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 //stripe
 const checkout = async(req,res,next)=>{
     try{
-
+        const bookingId = req.body.bookingId;
 
 
 
@@ -116,8 +116,8 @@ const checkoutByBookingId = async(req,res,next)=>{
 
 //delete cascade
 
-exports.updatePaymentByBookingId = updatePaymentByBookingId;
 exports.getPaymentByBookingId = getPaymentByBookingId;
+// exports.updatePaymentByBookingId = updatePaymentByBookingId;
 // exports.checkoutByBookingId = checkoutByBookingId;
 
 
