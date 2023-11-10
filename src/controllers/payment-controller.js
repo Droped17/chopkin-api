@@ -14,21 +14,20 @@ const checkoutBooking = async(req,res,next)=>{
         const packageName = req.body.packageName;
         const packagePrice = +req.body.packagePrice;
 
-        //search booking
-        const booking = await findBookingById(bookingId,next);
+        const booking = await findBookingById(bookingId,next);  //search booking
         if(!booking){
             return next(createError("not found this bookingId",404));
         }        
-        //search booking
+      
 
-        //==get payment
+        //==find payment
 
 
 
-        //==get payment
+        //==find payment
 
     
-        console.log(packagePrice)
+        // console.log(packagePrice)
         //==stripe
         const session = await stripe.checkout.sessions.create({
             mode:"payment",
@@ -52,11 +51,11 @@ const checkoutBooking = async(req,res,next)=>{
         //update payment Id
 
 
-        //
+        //update payment Id
 
 
-        //response
-        res.send({url:session.url});
+      
+        res.send({url:session.url});  //response
     }
     catch(error){
         next(error);
