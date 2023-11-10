@@ -16,6 +16,7 @@ const registerSchema = Joi.object({
     .trim()
     .required()
     .strip(),
+    profileImg:Joi.string().trim(),
 });
 
 exports.registerSchema = registerSchema;
