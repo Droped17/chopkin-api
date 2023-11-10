@@ -14,6 +14,7 @@ const reviewRoute = require("./routes/review-route");
 const bookingRoute = require("./routes/booking-route");
 const paymentRoute = require("./routes/payment-route");
 const googleRoute = require("./routes/google-route");
+const customerRoute = require('./routes/customer-route')
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -28,6 +29,7 @@ app.use('/review', reviewRoute);
 app.use("/booking",bookingRoute);
 app.use("/payment",paymentRoute);
 app.use("/google", googleRoute);
+app.use('/customer', customerRoute)
 
 app.use(notFoundMiddleware);
 app.use(errorMw);
