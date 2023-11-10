@@ -21,9 +21,25 @@ const createPaymentFunction = async(paymentStatus,next)=>{
         return payment;
     }
     catch(error){
-        next(error);
+       return next(error);
+    }
+}
+const updatePayment = async(paymentId,paymentStatus,next)=>{
+    try{
+        const updatePayment = await prisma.payment.update({
+            where:{
+                id:paymentId
+            },
+            data:{
+                paymentStatus:paymentStatus
+            }
+        });
+        return updatePayment
+    }
+    catch(error){
+       return null
     }
 }
 paymentFunction.createPaymentFunction = createPaymentFunction;
-
+paymentFunction.updatePayment = updatePayment;
 module.exports = paymentFunction;

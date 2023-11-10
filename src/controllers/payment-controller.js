@@ -1,6 +1,6 @@
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
-// const paymentMiddleware = require("../middleware/paymentMiddleware");
+const paymentMiddleware = require("../middleware/paymentMiddleware");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
@@ -34,7 +34,7 @@ const checkoutBooking = async(req,res,next)=>{
             line_items:[{
                 price_data:{
                     currency:"thb",
-                    unit_amount:packagePrice*100,
+                    unit_amount:packagePrice*100,//for convert decimal
                     product_data:{
                         name:packageName,
                         images:["https://domf5oio6qrcr.cloudfront.net/medialibrary/6372/202ebeef-6657-44ec-8fff-28352e1f5999.jpg"],//mockup images
@@ -48,23 +48,39 @@ const checkoutBooking = async(req,res,next)=>{
         
         //==stripe
 
+        console.log(session.url);
+
+        //codition for update payment
+
         //update payment Id
-
-
-        //update payment Id
-
-
       
-        res.send({url:session.url});  //response
+        res.send({url:session.url,paymentId:booking.paymentId});  //response
     }
     catch(error){
         next(error);
     }
 }
-
-
-
 //stripe
+
+//front call on useEffect (success)
+//if req.body.paymentStatus = null =>0
+const updatePaymentByPaymentId =async(req,res,next)=>{
+    try{
+        const paymentId = req.body.paymentId;
+        const paymentStatus = req.body.paymentStatus||0;
+        const updatePayment = await paymentMiddleware.updatePayment(paymentId,paymentStatus,next);
+        
+        if(!updatePayment){
+            return next(createError("not found this payment",404));
+        }
+
+        res.status(200).json({message:"update success",updatePayment});
+        
+    }catch(error){
+        next(error);
+    }
+}
+
 //#region bookingMiddleware
 const findBookingById = async(bookingId,next)=>{
     try {
@@ -181,6 +197,7 @@ const checkoutByBookingId = async(req,res,next)=>{
 
 exports.getPaymentByBookingId = getPaymentByBookingId;
 exports.checkoutBooking = checkoutBooking;
+exports.updatePaymentByPaymentId = updatePaymentByPaymentId;
 // exports.updatePaymentByBookingId = updatePaymentByBookingId;
 // exports.checkoutByBookingId = checkoutByBookingId;
 

@@ -4,6 +4,7 @@ const paymentController = require("../controllers/payment-controller");
 const router = express.Router();
 
 router.post("/create-checkout-sessions",paymentController.checkoutBooking);
+router.patch("/update",paymentController.updatePaymentByPaymentId);
 
 
 module.exports = router;
