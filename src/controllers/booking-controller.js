@@ -237,7 +237,7 @@ const getOwnBooking = async(req,res,next)=>{
 //delete booking
 const deleteBookingById = async(req,res,next)=>{
     try{
-        const bookingId = rea.params.bookingId;
+        const bookingId = req.params.bookingId;
         await prisma.booking.delete({
             where:{
                 id:bookingId
