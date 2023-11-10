@@ -83,6 +83,7 @@ const customerCreateBooking =async(req,res,next)=>{
 const EditBooking = async(req,res,next)=>{
     try{
         const data = req.body.data;
+
         const bookingId = req.body.bookingId
 
         const editBooking = await prisma.booking.update({
@@ -159,6 +160,10 @@ const getBookingByRestaurantId = async(req,res,next)=>{
         const allRestaurantBookingData = await prisma.booking.findMany({
             where:{
                 restaurantId:restaurantId
+            },
+            include:{
+                customer:true,
+                package:true
             }
         });
 
@@ -237,7 +242,17 @@ const getOwnBooking = async(req,res,next)=>{
 //delete booking
 const deleteBookingById = async(req,res,next)=>{
     try{
-        const bookingId = rea.params.bookingId;
+        const bookingId = req.params.bookingId;
+        const deleteBooking = await prisma.booking.findFirst({
+            where:{
+                id:bookingId
+            }
+        })
+        
+        if(!deleteBooking){
+            return next(createError("not found this booking",404))
+        }
+
         await prisma.booking.delete({
             where:{
                 id:bookingId

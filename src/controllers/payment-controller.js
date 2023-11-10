@@ -1,7 +1,77 @@
 const prisma = require("../models/prisma");
 const createError = require("../utils/create-error");
 // const paymentMiddleware = require("../middleware/paymentMiddleware");
-const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY)
+
+const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
+
+//stripe
+
+//post
+//req bookingId
+const checkoutBooking = async(req,res,next)=>{
+    try{
+        const bookingId = req.body.bookingId;
+        const packageName = req.body.packageName;
+        const packagePrice = +req.body.packagePrice;
+
+        //search booking
+        const booking = await findBookingById(bookingId,next);
+        if(!booking){
+            return next(createError("not found this bookingId",404));
+        }        
+        //search booking
+
+        //==find
+        
+        //==stripe
+        const session = await stripe.checkout.session.create({
+            made:"payment",
+            line_items:{
+                price_data:{
+                    currency:"thb",
+                    product_data:{
+                        name:packageName
+                    },
+                    unit_amount:packagePrice
+                },
+                quantity:1,
+            },
+            success_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.jurds.com.au%2Fwhat-defines-success%2F&psig=AOvVaw1FNfLZd9eNU0f4fxxL9yq9&ust=1699682439673000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIiH0dLguIIDFQAAAAAdAAAAABAE",
+            cancel_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hostinger.com%2Ftutorials%2Fhow-to-fix-error-404&psig=AOvVaw0eaVIbxPEGuxtUPOSJEzQV&ust=1699682415739000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCMCh9MbguIIDFQAAAAAdAAAAABAE",
+        });
+        
+        //==stripe
+
+        console.log(session);
+
+        //response
+        res.send({url:session.url});
+    }
+    catch(error){
+        next(error);
+    }
+}
+
+
+
+//stripe
+//#region bookingMiddleware
+const findBookingById = async(bookingId,next)=>{
+    try {
+        const booking = await prisma.booking.findFirst({
+            where: {
+                id: bookingId
+            }
+        });
+        return booking;
+    }
+    catch (error) {
+        return null;
+    }
+}
+//#endregion
+
+
 
 const getPaymentByBookingId = async(req,res,next)=>{
     try{
@@ -31,8 +101,8 @@ const getPaymentByBookingId = async(req,res,next)=>{
 const updatePaymentByBookingId = async(req,res,next)=>{
     try{
         const bookingId = req.body.bookingId;
-        const paymentStatus = +req.body.paymentStatus;//0,1
-
+        // const paymentStatus = +req.body.paymentStatus;//0,1
+        // console.log(bookingId)
         const checkBooking = await prisma.booking.findFirst({
             where:{
                 id:bookingId
@@ -45,15 +115,16 @@ const updatePaymentByBookingId = async(req,res,next)=>{
         const url = await checkoutByBookingId(req,res,next);
         
         //check url
-        console.log(url);
-
+        
+        // if(url!= "f") return next(createError("fail paying",500));
+        // console.log(checkBooking.paymentId)
         //update
         const paymentUpdate = await prisma.payment.update({
             where:{
                 id:checkBooking.paymentId
             },
             data:{
-                paymentStatus:paymentStatus
+                paymentStatus:1
             }
         });
 
@@ -68,8 +139,8 @@ const updatePaymentByBookingId = async(req,res,next)=>{
 const checkoutByBookingId = async(req,res,next)=>{
     try{
         const packageName = req.body.packageName;
-        const packagePrice = req.body.packagePrice;
-
+        const packagePrice = +req.body.packagePrice;
+        // console.log(packageName);
         const session = await stripe.checkout.session.create({
             made:"payment",
             line_items:{
@@ -78,14 +149,14 @@ const checkoutByBookingId = async(req,res,next)=>{
                     product_data:{
                         name:packageName
                     },
-                    unit_amount :packagePrice
+                    unit_amount:packagePrice
                 },
                 quantity:1,
             },
-            success_url:"front_success_url",
-            cancel_url:"front_cancle_url",
+            success_url:"s",
+            cancel_url:"c",
         });
-        
+      
         // res.status(200).json({message:"Pay Success",url:session.url});
         return session.url;
     }
@@ -96,8 +167,9 @@ const checkoutByBookingId = async(req,res,next)=>{
 
 //delete cascade
 
-exports.updatePaymentByBookingId = updatePaymentByBookingId;
 exports.getPaymentByBookingId = getPaymentByBookingId;
+exports.checkoutBooking = checkoutBooking;
+// exports.updatePaymentByBookingId = updatePaymentByBookingId;
 // exports.checkoutByBookingId = checkoutByBookingId;
 
 

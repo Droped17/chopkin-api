@@ -189,6 +189,7 @@ const CustomerRegister = async (req, res, next) => {
         email: value.email,
         phone: value.phone,
         password: value.password,
+        profileImg:value.profileImg,
       },
     });
 
