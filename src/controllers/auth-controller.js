@@ -7,7 +7,6 @@ require("dotenv");
 
 //email Or phone
 
-
 // model Customer {
 //   id          String     @id
 //   firstName   String
@@ -61,7 +60,7 @@ const register = async (req, res, next) => {
     console.log(req.params);
     if (usertype == "customer") return CustomerRegister(req, res, next);
     else if (usertype == "restaurant") return CreateRestaurants(req, res, next);
-    res.status(404).json({message:"not found"});
+    res.status(404).json({ message: "not found" });
   } catch (error) {
     next(error);
   }
@@ -80,14 +79,15 @@ const createAdmin = async (req, res, next) => {
         password: adminData.password,
       },
     });
-    
 
     const payload = { adminId: newAdmin.id };
-    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+    const accessToken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
     res.status(200).json({ message: "create admin", accessToken, newAdmin });
-
-  } 
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -98,26 +98,26 @@ const CreateRestaurants = async (req, res, next) => {
 
     //validate
     const data = req.body;
-    if(data.password!= data.confirmPassword){
+    if (data.password != data.confirmPassword) {
       return next(createError("password not match", 400));
     }
     const checkRestaurants = await prisma.restaurant.findFirst({
       where: {
         OR: [{ email: data.email }, { phone: data.phone }],
-      }
+      },
     });
     const checkCustomer = await prisma.customer.findFirst({
       where: {
         OR: [{ email: data.email }, { phone: data.phone }],
-      }
+      },
     });
 
     if (checkRestaurants || checkCustomer) {
       return next(createError("have this email and password", 400));
     }
     //1234 default password
-    data.password = await bcrypt.hash("1234",12);
-    console.log(data.password)
+    data.password = await bcrypt.hash("1234", 12);
+    console.log(data.password);
 
     const newRestaurants = await prisma.restaurant.create({
       data: {
@@ -129,22 +129,29 @@ const CreateRestaurants = async (req, res, next) => {
         latitude: +data.latitude,
         longitude: +data.longitude,
         price: +data.price,
-        password:data.password,
+        password: data.password,
         categoryIndex: data.categoryIndex,
         districtIndex: data.districtIndex,
         nationIndex: data.nationIndex,
       },
     });
 
- 
-
     const payload = { restaurantId: newRestaurants.id };
-    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+    const accessToken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
 
-    res.status(200).json({message:"create restaurants success",accessToken,newRestaurants});
-  }
-  catch(error){
-    next(error)
+    res
+      .status(200)
+      .json({
+        message: "create restaurants success",
+        accessToken,
+        newRestaurants,
+      });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -158,12 +165,12 @@ const CustomerRegister = async (req, res, next) => {
     const checkRestaurants = await prisma.restaurant.findFirst({
       where: {
         OR: [{ email: value.email }, { phone: value.phone }],
-      }
+      },
     });
     const checkCustomer = await prisma.customer.findFirst({
       where: {
         OR: [{ email: value.email }, { phone: value.phone }],
-      }
+      },
     });
 
     if (checkRestaurants || checkCustomer) {
@@ -188,110 +195,125 @@ const CustomerRegister = async (req, res, next) => {
 
     const payload = { customerId: customer.id };
     //accessToken
-    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
+    const accessToken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
 
     delete customer.password;
-    res.status(200).json({ message: "Create customer success", accessToken, customer });
+    res
+      .status(200)
+      .json({ message: "Create customer success", accessToken, customer });
   } catch (error) {
     console.log(error);
     next(error);
   }
-}
+};
 
-const login = async(req,res,next)=>{
-  try{
+const login = async (req, res, next) => {
+  try {
     const data = req.body;
     const checkRestaurants = await prisma.restaurant.findFirst({
       where: {
         OR: [{ email: data.emailOrPhone }, { phone: data.emailOrPhone }],
-      }
+      },
     });
 
-    if(checkRestaurants) return restaurantLogin(data,checkRestaurants,res,next);
+    if (checkRestaurants)
+      return restaurantLogin(data, checkRestaurants, res, next);
 
     const checkCustomer = await prisma.customer.findFirst({
       where: {
         OR: [{ email: data.emailOrPhone }, { phone: data.emailOrPhone }],
-      }
+      },
     });
-    
-    if(checkCustomer) return customerLogin(data,checkCustomer,res,next);
-    
+
+    if (checkCustomer) return customerLogin(data, checkCustomer, res, next);
+
     const checkAdmin = await prisma.admin.findFirst({
-      where:{
-        email:data.emailOrPhone
-      }
+      where: {
+        email: data.emailOrPhone,
+      },
     });
-    if(checkAdmin) return adminLogin(data,checkAdmin,res,next);
+    if (checkAdmin) return adminLogin(data, checkAdmin, res, next);
 
     // if(checkRestaurants)restaurantLogin(req,res,next);
     // // else if(checkCustomer)customerLogin(req,res,next);
     // else if(checkAdmin)adminLogin(req,res,next);
-    res.status(404).json({message:"not found this user"});
-  }
-  catch(error){
+    res.status(404).json({ message: "not found this user" });
+  } catch (error) {
     next(error);
   }
-
-}
-const customerLogin =async(data,customer,res,next) =>{
-    try{
-      const passwordCheck = await bcrypt.compare(data.password,customer.password);
-      if(!passwordCheck)
-      {
-        return next(createError("password not match", 400));
-      }
-      const payload = { customerId: customer.id };
-      const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-      res.status(200).json({message:"customer Login",accessToken,customer});
-
+};
+const customerLogin = async (data, customer, res, next) => {
+  try {
+    const passwordCheck = await bcrypt.compare(
+      data.password,
+      customer.password
+    );
+    if (!passwordCheck) {
+      return next(createError("password not match", 400));
     }
-    catch(error){
-      next(error);
+    const payload = { customerId: customer.id };
+    const accessToken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
+    res.status(200).json({ message: "customer Login", accessToken, customer });
+  } catch (error) {
+    next(error);
+  }
+};
+const adminLogin = async (data, admin, res, next) => {
+  try {
+    const passwordCheck = await bcrypt.compare(data.password, admin.password);
+    console.log(admin.password);
+    if (!passwordCheck) {
+      return next(createError("password not match", 400));
     }
+    const payload = { adminId: admin.id };
+    const accessToken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
+    res.status(200).json({ message: "admin Login", accessToken, admin });
+  } catch (error) {
+    next(error);
+  }
+};
 
-}
-const adminLogin =async(data,admin,res,next) =>{
-    try{
-      const passwordCheck = await bcrypt.compare(data.password,admin.password);
-      console.log(admin.password);
-      if(!passwordCheck)
-      {
-        return next(createError("password not match", 400));
-      }
-      const payload = { adminId: admin.id };
-      const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-      res.status(200).json({message:"admin Login",accessToken,admin});
-
-    }
-    catch(error){
-      next(error);
-    }
-
-}
-
-const restaurantLogin =async(data,restaurant,res,next) =>{
-  try{
-    const passwordCheck = await bcrypt.compare(data.password,restaurant.password);
-    console.log(restaurant.password)
+const restaurantLogin = async (data, restaurant, res, next) => {
+  try {
+    const passwordCheck = await bcrypt.compare(
+      data.password,
+      restaurant.password
+    );
+    console.log(restaurant.password);
     // const passwordCheck = data.password === restaurant.password
 
-    if(!passwordCheck)
-    {
+    if (!passwordCheck) {
       return next(createError("password not match", 400));
     }
     const payload = { restaurantId: restaurant.id };
-    const accessToken = jwt.sign(payload,process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",{ expiresIn: process.env.JWT_EXPIRE });
-    res.status(200).json({message:"restaurant Login",accessToken,restaurant});
-  }
-  catch(error){
+    const accessToken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET_KEY || "8JncnNqEPncnca7ranc47anda",
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
+    res
+      .status(200)
+      .json({ message: "restaurant Login", accessToken, restaurant });
+  } catch (error) {
     next(error);
   }
-}
+};
 
-const getUser = (req,res,next)=>{
-  return res.status(200).json({user:req.user});
-}
+const getUser = (req, res, next) => {
+  return res.status(200).json({ user: req.user });
+};
 
 exports.register = register;
 exports.createAdmin = createAdmin;
