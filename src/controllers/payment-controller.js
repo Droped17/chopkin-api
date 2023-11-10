@@ -5,13 +5,47 @@ const createError = require("../utils/create-error");
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
 //stripe
-const checkout = async(req,res,next)=>{
+
+//post
+//req bookingId
+const checkoutBooking = async(req,res,next)=>{
     try{
         const bookingId = req.body.bookingId;
+        const packageName = req.body.packageName;
+        const packagePrice = +req.body.packagePrice;
 
+        //search booking
+        const booking = await findBookingById(bookingId,next);
+        if(!booking){
+            return next(createError("not found this bookingId",404));
+        }        
+        //search booking
 
+        //==find
+        
+        //==stripe
+        const session = await stripe.checkout.session.create({
+            made:"payment",
+            line_items:{
+                price_data:{
+                    currency:"thb",
+                    product_data:{
+                        name:packageName
+                    },
+                    unit_amount:packagePrice
+                },
+                quantity:1,
+            },
+            success_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.jurds.com.au%2Fwhat-defines-success%2F&psig=AOvVaw1FNfLZd9eNU0f4fxxL9yq9&ust=1699682439673000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIiH0dLguIIDFQAAAAAdAAAAABAE",
+            cancel_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hostinger.com%2Ftutorials%2Fhow-to-fix-error-404&psig=AOvVaw0eaVIbxPEGuxtUPOSJEzQV&ust=1699682415739000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCMCh9MbguIIDFQAAAAAdAAAAABAE",
+        });
+        
+        //==stripe
 
+        console.log(session);
 
+        //response
+        res.send({url:session.url});
     }
     catch(error){
         next(error);
@@ -21,6 +55,23 @@ const checkout = async(req,res,next)=>{
 
 
 //stripe
+//#region bookingMiddleware
+const findBookingById = async(bookingId,next)=>{
+    try {
+        const booking = await prisma.booking.findFirst({
+            where: {
+                id: bookingId
+            }
+        });
+        return booking;
+    }
+    catch (error) {
+        return null;
+    }
+}
+//#endregion
+
+
 
 const getPaymentByBookingId = async(req,res,next)=>{
     try{
@@ -117,6 +168,7 @@ const checkoutByBookingId = async(req,res,next)=>{
 //delete cascade
 
 exports.getPaymentByBookingId = getPaymentByBookingId;
+exports.checkoutBooking = checkoutBooking;
 // exports.updatePaymentByBookingId = updatePaymentByBookingId;
 // exports.checkoutByBookingId = checkoutByBookingId;
 
