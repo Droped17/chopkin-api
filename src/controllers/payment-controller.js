@@ -99,6 +99,7 @@ const findPackageById = async(packageId,next)=>{
 }
 //#endregion
 
+//get
 const getPaymentByBookingId = async(req,res,next)=>{
     try{
         const bookingId = req.params.bookingId;
@@ -122,6 +123,7 @@ const getPaymentByBookingId = async(req,res,next)=>{
         next(error);
     }
 }
+
 
 
 //delete cascade
