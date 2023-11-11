@@ -4,6 +4,8 @@ const paymentMiddleware = require("../middleware/paymentMiddleware");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
+const SUCCESS_URL = "http://localhost:5173/success/";
+
 //stripe
 
 //post
@@ -11,24 +13,18 @@ const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 const checkoutBooking = async(req,res,next)=>{
     try{
         const bookingId = req.body.bookingId;
-        const packageName = req.body.packageName;
-        const packagePrice = +req.body.packagePrice;
+        //validate
+
+        //validate
 
         const booking = await findBookingById(bookingId,next);  //search booking
         if(!booking){
             return next(createError("not found this bookingId",404));
         }        
-      
-
-        //==find package
-
-        const package = await findPackageById(booking.packageId);
+        
+        const package = await findPackageById(booking.packageId);//==find package
         if(!package)return next(createError("not found this package id",404));
 
-        //==find package
-
-    
-        // console.log(packagePrice)
         //==stripe
         const session = await stripe.checkout.sessions.create({
             mode:"payment",
@@ -43,20 +39,14 @@ const checkoutBooking = async(req,res,next)=>{
                 },
                 quantity:1,
             }],
-            success_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.jurds.com.au%2Fwhat-defines-success%2F&psig=AOvVaw1FNfLZd9eNU0f4fxxL9yq9&ust=1699682439673000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIiH0dLguIIDFQAAAAAdAAAAABAE",
-            // success_url:"http://localhost:5173/success/"+booking.paymentId,
+            // success_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.jurds.com.au%2Fwhat-defines-success%2F&psig=AOvVaw1FNfLZd9eNU0f4fxxL9yq9&ust=1699682439673000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIiH0dLguIIDFQAAAAAdAAAAABAE",
+            success_url:SUCCESS_URL+booking.paymentId,
             cancel_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hostinger.com%2Ftutorials%2Fhow-to-fix-error-404&psig=AOvVaw0eaVIbxPEGuxtUPOSJEzQV&ust=1699682415739000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCMCh9MbguIIDFQAAAAAdAAAAABAE",
         });
         
         //==stripe
-
-        console.log(session.url);
-
-        //codition for update payment
-
-        //update payment Id
-      
-        res.send({url:session.url,paymentId:booking.paymentId});  //response
+        // console.log(session.url);
+        res.send({url:session.url,paymentId:booking.paymentId});
     }
     catch(error){
         next(error);
