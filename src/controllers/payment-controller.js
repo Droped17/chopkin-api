@@ -10,6 +10,7 @@ const SUCCESS_URL = "http://localhost:5173/success/";
 
 //post
 //req bookingId
+//    img
 const checkoutBooking = async(req,res,next)=>{
     try{
         const bookingId = req.body.bookingId;
@@ -19,10 +20,10 @@ const checkoutBooking = async(req,res,next)=>{
             return next(createError("not found this bookingId",404));
         }        
         
-        const package = await findPackageById(booking.packageId);//==find package
+        const package = await findPackageById(booking.packageId);//find package
         if(!package)return next(createError("not found this package id",404));
 
-        //==stripe
+        //stripe
         const session = await stripe.checkout.sessions.create({
             mode:"payment",
             line_items:[{
