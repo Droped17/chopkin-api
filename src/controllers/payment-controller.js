@@ -20,11 +20,12 @@ const checkoutBooking = async(req,res,next)=>{
         }        
       
 
-        //==find payment
+        //==find package
 
+        const package = await findPackageById(booking.packageId);
+        if(!package)return next(createError("not found this package id",404));
 
-
-        //==find payment
+        //==find package
 
     
         // console.log(packagePrice)
@@ -34,15 +35,16 @@ const checkoutBooking = async(req,res,next)=>{
             line_items:[{
                 price_data:{
                     currency:"thb",
-                    unit_amount:packagePrice*100,//for convert decimal
+                    unit_amount:package.price*100,//for convert decimal
                     product_data:{
-                        name:packageName,
+                        name:package.name,
                         images:["https://domf5oio6qrcr.cloudfront.net/medialibrary/6372/202ebeef-6657-44ec-8fff-28352e1f5999.jpg"],//mockup images
                     },
                 },
                 quantity:1,
             }],
             success_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.jurds.com.au%2Fwhat-defines-success%2F&psig=AOvVaw1FNfLZd9eNU0f4fxxL9yq9&ust=1699682439673000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIiH0dLguIIDFQAAAAAdAAAAABAE",
+            // success_url:"http://localhost:5173/success/"+booking.paymentId,
             cancel_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hostinger.com%2Ftutorials%2Fhow-to-fix-error-404&psig=AOvVaw0eaVIbxPEGuxtUPOSJEzQV&ust=1699682415739000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCMCh9MbguIIDFQAAAAAdAAAAABAE",
         });
         
@@ -92,6 +94,19 @@ const findBookingById = async(bookingId,next)=>{
         return booking;
     }
     catch (error) {
+        return null;
+    }
+}
+const findPackageById = async(packageId,next)=>{
+    try{
+        const package = await prisma.package.findFirst({
+            where:{
+                id:packageId
+            }
+        });
+        return package;
+    }
+    catch(error){
         return null;
     }
 }
