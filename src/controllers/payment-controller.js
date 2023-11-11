@@ -13,9 +13,6 @@ const SUCCESS_URL = "http://localhost:5173/success/";
 const checkoutBooking = async(req,res,next)=>{
     try{
         const bookingId = req.body.bookingId;
-        //validate
-
-        //validate
 
         const booking = await findBookingById(bookingId,next);  //search booking
         if(!booking){
