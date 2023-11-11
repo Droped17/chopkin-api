@@ -67,13 +67,14 @@ PATCH
 req
 ==
 paymentStatus:1
-paymentId:"asdasdasdasd"
+paymentId:"STRING"
 ==
 /payment/update
 ------------------
 POST
 req
 ==
-bookingId:"asdadasda"
+bookingId:"STRING"
+img:"STRING"
 ==
 /payment/create-checkout-sessions
