@@ -5,10 +5,10 @@ const uploadMiddleware = require("../middleware/uploadMiddleware");
 const customerController = require("../controllers/customer-controller");
 
 router.patch(
-  "/edit-profile",
-  authenticated,
-  uploadMiddleware.single("profileImg"),
-  customerController.updateProfile
+	"/edit-profile",
+	authenticated,
+	uploadMiddleware.single("profileImg"),
+	customerController.updateProfile
 );
 
 router.get("/getAll", authenticated, customerController.getAllCus);
