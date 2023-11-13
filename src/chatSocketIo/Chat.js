@@ -1,5 +1,6 @@
 const {Server} = require("socket.io");
 
+//http://localhost:3000
 const FRONTEND_PATH = "http://localhost:5173";
 
 const setCorsSocketIo = (server)=>{

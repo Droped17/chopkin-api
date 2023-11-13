@@ -18,13 +18,12 @@ const googleRoute = require("./routes/google-route");
 const customerRoute = require('./routes/customer-route');
 const Chat = require("./chatSocketIo/Chat");
 
+
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.static("public"));
 
-const server = http.createServer(app);
-Chat(server);
 
 app.use("/restaurant", restaurantRoute);
 app.use("/chat", chatRoute);
@@ -39,5 +38,8 @@ app.use('/customer', customerRoute)
 app.use(notFoundMiddleware);
 app.use(errorMw);
 
+const server = http.createServer(app);
+Chat(server);
+
 const port = process.env.PORT || 8000;
-app.listen(port, () => console.log("server is running on port", port));
+server.listen(port, () => console.log("server is running on port", port));
