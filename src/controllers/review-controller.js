@@ -6,7 +6,10 @@ const { checkReviewIdSchema } = require("../validators/review-validator");
 
 exports.createReview = async (req, res, next) => {
   try {
-    const { reviewMessage, restaurantId, score } = req.body;
+    const { reviewMessage, restaurantId, score } = JSON.parse(req.body.data);
+    // const { reviewMessage, restaurantId, score } =req.body
+    console.log(req.body);
+
     if ((!reviewMessage || !reviewMessage.trim()) && !req.file) {
       return next(createError("Review or Image is required", 400));
     }
@@ -14,22 +17,37 @@ exports.createReview = async (req, res, next) => {
     const data = {};
     data.restaurantId = restaurantId;
     data.customerId = req.user.id;
-    if (req.file) {
-      data.ReviewImages = await upload(req.file.path);
+    console.log(req.files);
+    let allReviewImages = [];
+    if (req.files.length > 0) {
+      for (let i = 0; i < req.files.length; i++) {
+        allReviewImages[i] = { url: await upload(req.files[i].path) };
+      }
+      console.log(allReviewImages);
+      // data.ReviewImages[0] = await upload(req.files[0].path);
+      // data.ReviewImages[1] = await upload(req.files[1].path);
+      // data.ReviewImages[2] = await upload(req.files[2].path);
     }
     if (reviewMessage) {
       data.message = reviewMessage;
     }
     data.score = +score;
     const review = await prisma.review.create({
-      data: data,
-      // data: {
-      //   message: data.message,
-      //   restaurantId: data.restaurantId,
-      //   customerId: data.customerId,
-      //   score: data.score,
-      //   ReviewImages: data.ReviewImages,
-      // },
+      data: {
+        message: data.message,
+        restaurantId: data.restaurantId,
+        customerId: data.customerId,
+        score: data.score,
+        ReviewImages: {
+          create:
+            // { url: data.ReviewImages[0] },
+            allReviewImages,
+        },
+      },
+
+      include: {
+        ReviewImages: true,
+      },
     });
     res.status(201).json({ message: "Review created", review });
   } catch (err) {
