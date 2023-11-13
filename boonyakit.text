@@ -62,3 +62,19 @@ req:{
 
 }
 
+payment
+PATCH
+req
+==
+paymentStatus:1
+paymentId:"STRING"
+==
+/payment/update
+------------------
+POST
+req
+==
+bookingId:"STRING"
+img:"STRING"
+==
+/payment/create-checkout-sessions

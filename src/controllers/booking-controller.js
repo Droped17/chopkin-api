@@ -280,12 +280,22 @@ const updateOrderStatusByBookingId = async (req, res, next) => {
 			where: {
 				id: bookingId,
 			},
-			data: {
-				orderStatus: orderStatusUpdate,
-			},
 		});
 
-		res.status(200).json({ message: "update Complete", bookingForUpdate });
+		if(!bookingForUpdate){
+            return next(createError("not found this payment",404));
+        }
+		
+		const updateBooking = await prisma.booking.update({
+			where: {
+				id: bookingId,
+			},
+			data:{
+				orderStatus:orderStatusUpdate
+			},
+		})
+
+		res.status(200).json({ message: "update Complete", updateBooking });
 	} catch (error) {
 		next(error);
 	}
