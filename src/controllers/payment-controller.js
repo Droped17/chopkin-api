@@ -4,7 +4,9 @@ const paymentMiddleware = require("../middleware/paymentMiddleware");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_PRIVATE_KEY);
 
-const SUCCESS_URL = "http://localhost:5173/success/";
+// const SUCCESS_URL = "http://localhost:5173/success/";
+const SUCCESS_URL = "http://localhost:5173/payment/success/";
+const CANCLE_URL = "http://localhost:5173/profile/"
 
 //stripe
 
@@ -39,7 +41,8 @@ const checkoutBooking = async(req,res,next)=>{
             }],
             // success_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.jurds.com.au%2Fwhat-defines-success%2F&psig=AOvVaw1FNfLZd9eNU0f4fxxL9yq9&ust=1699682439673000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIiH0dLguIIDFQAAAAAdAAAAABAE",
             success_url:SUCCESS_URL+booking.paymentId,
-            cancel_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hostinger.com%2Ftutorials%2Fhow-to-fix-error-404&psig=AOvVaw0eaVIbxPEGuxtUPOSJEzQV&ust=1699682415739000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCMCh9MbguIIDFQAAAAAdAAAAABAE",
+            cancel_url:CANCLE_URL+booking.customerId
+            // cancel_url:"https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.hostinger.com%2Ftutorials%2Fhow-to-fix-error-404&psig=AOvVaw0eaVIbxPEGuxtUPOSJEzQV&ust=1699682415739000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCMCh9MbguIIDFQAAAAAdAAAAABAE",
         });
         
         //==stripe
