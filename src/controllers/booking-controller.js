@@ -19,86 +19,94 @@ const createError = require("../utils/create-error");
 // bookingDate    String
 // bookingTime    String
 // ChatRooms      ChatRoom[]
-  
+
 //==use==
 //create post | useAuthMiddleware
-const customerCreateBooking =async(req,res,next)=>{
-    try{
-        const data = req.body; //
-        console.log(data);
-        const packageId = data.packageId;
-        const customer = req.user;
-        const restaurantId = data.restaurantId;
-        const bookingDate = data.bookingDate;
-        const bookingTime = data.bookingTime;
-        const specialRequest = data.specialRequest;
-        const totalKid = data.totalKid;
-        const totalCustomer = data.totalCustomer;
-        const paymentStatus = data.paymentStatus;
-        //validate
+const customerCreateBooking = async (req, res, next) => {
+	try {
+		const data = req.body; //
+		console.log(data);
+		const packageId = data.packageId;
+		const customer = req.user;
+		const restaurantId = data.restaurantId;
+		const bookingDate = data.bookingDate;
+		const bookingTime = data.bookingTime;
+		const specialRequest = data.specialRequest;
+		const totalKid = data.totalKid;
+		const totalCustomer = data.totalCustomer;
+		const paymentStatus = data.paymentStatus;
+		//validate
 
-        //validate
+		//validate
 
-        //find package
-        const selectPackage = await prisma.package.findFirst({
-            where:{ 
-                id:packageId
-            }
-        });
-        //check package
-        if(!selectPackage){
-            return next(createError("not found this package",404));
-        }
+		//find package
+		const selectPackage = await prisma.package.findFirst({
+			where: {
+				id: packageId,
+			},
+		});
+		//check package
+		if (!selectPackage) {
+			return next(createError("not found this package", 404));
+		}
 
-        
-        //Validate CustomerBookingData
-        
-        //Validate CustomerBookingData
-        
-        const payment = await paymentMiddleware.createPaymentFunction(paymentStatus,next);
-        //create booking
-        const newBooking =  await prisma.booking.create({
-            data:{
-                customerId:customer.id,
-                restaurantId:restaurantId,
-                paymentId:payment.id,
-                packageId:selectPackage.id,
-                totalCustomer:totalCustomer,
-                totalKid:totalKid,
-                specialRequest:specialRequest||"",
-                bookingDate:bookingDate,
-                bookingTime:bookingTime,
-            }
-        });
+		//Validate CustomerBookingData
 
-        res.status(200).json({message:"create complete",newBooking})
-    }
-    catch(error){
-        next(error);
-    }
-}
+		//Validate CustomerBookingData
 
+		const payment = await paymentMiddleware.createPaymentFunction(
+			paymentStatus,
+			next
+		);
+		//create booking
+		const newBooking = await prisma.booking.create({
+			data: {
+				customerId: customer.id,
+				restaurantId: restaurantId,
+				paymentId: payment.id,
+				packageId: selectPackage.id,
+				totalCustomer: totalCustomer,
+				totalKid: totalKid,
+				specialRequest: specialRequest || "",
+				bookingDate: bookingDate,
+				bookingTime: bookingTime,
+			},
+		});
 
+		res.status(200).json({ message: "create complete", newBooking });
+	} catch (error) {
+		next(error);
+	}
+};
 
-const EditBooking = async(req,res,next)=>{
-    try{
-        const data = req.body.data;
+const EditBooking = async (req, res, next) => {
+	try {
+		// const data = req.body.data;
+		const { packageId, totalCustomer, totalKid, bookingDate, bookingTime } =
+			req.body;
 
-        const bookingId = req.body.bookingId
+		// const bookingId = req.body.bookingId;
+		const { bookingId } = req.params;
 
-        const editBooking = await prisma.booking.update({
-            where:{
-                id:bookingId
-            },
-            data:data//match by key
-        });
+		const editBooking = await prisma.booking.update({
+			where: {
+				id: bookingId,
+			},
+			data: {
+				packageId,
+				totalCustomer,
+				totalKid,
+				bookingDate,
+				bookingTime,
+			}, //match by key
+		});
+		console.log("two =>", editBooking);
 
-        res.status(200).json({message:"edit complete",editBooking});
-    }
-    catch(error){
-        next(error);
-    }
-}
+		res.status(200).json({ message: "edit complete", editBooking });
+	} catch (error) {
+		next(error);
+	}
+};
 //For===payment controller===
 // const editPayment = async(req,res,next)=>{
 //     try{
@@ -124,7 +132,7 @@ const EditBooking = async(req,res,next)=>{
 //                 paymentStatus:status
 //             }
 //         });
-        
+
 //         res.status(200).json({message:"update complete",paymentUpdated});
 //     }
 //     catch(error){
@@ -135,161 +143,153 @@ const EditBooking = async(req,res,next)=>{
 //===before===
 
 //get by customerId
-const getBookingByCustomerId = async(req,res,next)=>{
-    try{
-        const customerId = req.params.customerId;
+const getBookingByCustomerId = async (req, res, next) => {
+	try {
+		const customerId = req.params.customerId;
 
-        const allBooking = await prisma.booking.findMany({
-            where:{
-                customerId:customerId
-            }
-        });
+		const allBooking = await prisma.booking.findMany({
+			where: {
+				customerId: customerId,
+			},
+		});
 
-        res.status(200).json({message:"get booking by ID success",allBooking})
-
-    }
-    catch(error){
-        next(error);
-
-    }
-}
+		res.status(200).json({
+			message: "get booking by ID success",
+			allBooking,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
 //get by restaurantId
-const getBookingByRestaurantId = async(req,res,next)=>{
-    try{
-        const restaurantId = req.params.restaurantId;
-        const allRestaurantBookingData = await prisma.booking.findMany({
-            where:{
-                restaurantId:restaurantId
-            },
-            include:{
-                customer:true,
-                package:true
-            }
-        });
+const getBookingByRestaurantId = async (req, res, next) => {
+	try {
+		const restaurantId = req.params.restaurantId;
+		const allRestaurantBookingData = await prisma.booking.findMany({
+			where: {
+				restaurantId: restaurantId,
+			},
+			include: {
+				customer: true,
+				package: true,
+			},
+		});
 
-        res.status(200).json({message:"getBookingByRestaranId",allRestaurantBookingData});
-
-    }
-    catch(error){
-        next(error);
-
-    }
-}
+		res.status(200).json({
+			message: "getBookingByRestaranId",
+			allRestaurantBookingData,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
 
 //get all
-const getAllBooking = async(req,res,next)=>{
-    try{
-        const allBooking = await prisma.booking.findMany({
-            include:{
-                restaurant:true,customer:true,package:true
-            }
-        });
-        res.status(200).json({message:"Get All Booking",allBooking});
-    }
-    catch(error){
-        next(error);
-    }
-}
+const getAllBooking = async (req, res, next) => {
+	try {
+		const allBooking = await prisma.booking.findMany({
+			include: {
+				restaurant: true,
+				customer: true,
+				package: true,
+			},
+		});
+		res.status(200).json({ message: "Get All Booking", allBooking });
+	} catch (error) {
+		next(error);
+	}
+};
 
 //get by status
-const getBookingByStatus = async(req,res,next)=>{
-    try{
-        const status = +req.params.status;//0,1,2
-        const bookingByStatus = await prisma.booking.findMany({
-            where:{
-                orderStatus:status
-            }
-        });
+const getBookingByStatus = async (req, res, next) => {
+	try {
+		const status = +req.params.status; //0,1,2
+		const bookingByStatus = await prisma.booking.findMany({
+			where: {
+				orderStatus: status,
+			},
+		});
 
-        res.status(200).json({message:"Get Booking By status"},bookingByStatus);
-    }
-    catch(error){
-        next(error);
-    }
-}
+		res.status(200).json(
+			{ message: "Get Booking By status" },
+			bookingByStatus
+		);
+	} catch (error) {
+		next(error);
+	}
+};
 //get own Booking
-const getOwnBooking = async(req,res,next)=>{
-    try{
-        const my = req.user;
-        let allBooking = null;
+const getOwnBooking = async (req, res, next) => {
+	try {
+		const my = req.user;
+		let allBooking = null;
 
-        if(my.restaurantName){
-            allBooking = await prisma.booking.findMany({
-                where:{
-                    restaurantId:my.id
-                }
-            });
-        }
-        else if(my.memberPoint){
-            allBooking = await prisma.booking.findMany({
-                where:{
-                    customerId:my.id
-                }
-            });
-        }
-        else{
-
-           return next(createError("not found",404));
-        }
-        res.status(200).json({message:"get success",allBooking})
-    
-    }   
-    catch(error){
-        next(error);
-    }
-}
+		if (my.restaurantName) {
+			allBooking = await prisma.booking.findMany({
+				where: {
+					restaurantId: my.id,
+				},
+			});
+		} else if (my.memberPoint) {
+			allBooking = await prisma.booking.findMany({
+				where: {
+					customerId: my.id,
+				},
+			});
+		} else {
+			return next(createError("not found", 404));
+		}
+		res.status(200).json({ message: "get success", allBooking });
+	} catch (error) {
+		next(error);
+	}
+};
 
 //delete booking
-const deleteBookingById = async(req,res,next)=>{
-    try{
-        const bookingId = req.params.bookingId;
-        const deleteBooking = await prisma.booking.findFirst({
-            where:{
-                id:bookingId
-            }
-        })
-        
-        if(!deleteBooking){
-            return next(createError("not found this booking",404))
-        }
+const deleteBookingById = async (req, res, next) => {
+	try {
+		const bookingId = req.params.bookingId;
+		const deleteBooking = await prisma.booking.findFirst({
+			where: {
+				id: bookingId,
+			},
+		});
 
-        await prisma.booking.delete({
-            where:{
-                id:bookingId
-            }
-        });
+		if (!deleteBooking) {
+			return next(createError("not found this booking", 404));
+		}
 
-    }catch(error){
-        next(error);
-    }
-}
+		await prisma.booking.delete({
+			where: {
+				id: bookingId,
+			},
+		});
+	} catch (error) {
+		next(error);
+	}
+};
 
 //patch
-const updateOrderStatusByBookingId = async(req,res,next)=>{
-    try{
-        //update order status
-        const bookingId = req.body.bookingId;
-        const orderStatusUpdate = +req.body.status;//0,1,2
+const updateOrderStatusByBookingId = async (req, res, next) => {
+	try {
+		//update order status
+		const bookingId = req.body.bookingId;
+		const orderStatusUpdate = +req.body.status; //0,1,2
 
-        const bookingForUpdate = await prisma.booking.findFirst({
-            where:{
-                id:bookingId
-            },
-            data:{
-                orderStatus:orderStatusUpdate
-            }
+		const bookingForUpdate = await prisma.booking.findFirst({
+			where: {
+				id: bookingId,
+			},
+			data: {
+				orderStatus: orderStatusUpdate,
+			},
+		});
 
-        });
-
-        res.status(200).json({message:"update Complete",bookingForUpdate});
-
-
-    }catch(error){
-        next(error);
-    }
-}
-
-
+		res.status(200).json({ message: "update Complete", bookingForUpdate });
+	} catch (error) {
+		next(error);
+	}
+};
 
 exports.updateOrderStatusByBookingId = updateOrderStatusByBookingId;
 exports.getBookingByCustomerId = getBookingByCustomerId;
