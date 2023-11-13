@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 require("dotenv").config();
+const http = require("http");
 const cors = require("cors");
 const app = express();
 
@@ -14,12 +15,16 @@ const reviewRoute = require("./routes/review-route");
 const bookingRoute = require("./routes/booking-route");
 const paymentRoute = require("./routes/payment-route");
 const googleRoute = require("./routes/google-route");
-const customerRoute = require('./routes/customer-route')
+const customerRoute = require('./routes/customer-route');
+const Chat = require("./chatSocketIo/Chat");
 
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.static("public"));
+
+const server = http.createServer(app);
+Chat(server);
 
 app.use("/restaurant", restaurantRoute);
 app.use("/chat", chatRoute);
