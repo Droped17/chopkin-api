@@ -25,7 +25,6 @@ const chatConnection = (io)=>{
             e.to(data.room).emit("recive_message",data);
         });
     
-    
         e.on("disconnect",()=>{
             console.log("User disconnect",e.id);
         });
