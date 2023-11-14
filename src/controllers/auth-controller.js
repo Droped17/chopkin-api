@@ -98,6 +98,18 @@ const CreateRestaurants = async (req, res, next) => {
 
     //validate
     const data = req.body;
+    // const {
+    //   restaurantName,
+    //   ownerFirstName,
+    //   ownerLastName,
+    //   email,
+    //   phone,
+    //   categoryIndex,
+    //   nationIndex,
+    //   districtIndex,
+    //   price,
+    //   position,
+    // } = data;
     if (data.password != data.confirmPassword) {
       return next(createError("password not match", 400));
     }
@@ -126,8 +138,8 @@ const CreateRestaurants = async (req, res, next) => {
         ownerLastName: data.ownerLastName,
         email: data.email,
         phone: data.phone,
-        latitude: +data.latitude,
-        longitude: +data.longitude,
+        latitude: +data.position.lat,
+        longitude: +data.position.lng,
         price: +data.price,
         password: data.password,
         categoryIndex: data.categoryIndex,
@@ -143,13 +155,11 @@ const CreateRestaurants = async (req, res, next) => {
       { expiresIn: process.env.JWT_EXPIRE }
     );
 
-    res
-      .status(200)
-      .json({
-        message: "create restaurants success",
-        accessToken,
-        newRestaurants,
-      });
+    res.status(200).json({
+      message: "create restaurants success",
+      accessToken,
+      newRestaurants,
+    });
   } catch (error) {
     next(error);
   }
@@ -189,7 +199,7 @@ const CustomerRegister = async (req, res, next) => {
         email: value.email,
         phone: value.phone,
         password: value.password,
-        profileImg:value.profileImg,
+        profileImg: value.profileImg,
       },
     });
 
