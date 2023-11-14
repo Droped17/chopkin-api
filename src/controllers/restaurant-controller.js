@@ -145,6 +145,76 @@ exports.deleteRes = async (req, res, next) => {
   }
 };
 
+exports.deleteAllTempImg = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      next(createError("You're unauhorized", 401));
+      return;
+    }
+    const { error, value } = resIdSchema.validate(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+
+    const exists = await prisma.tempRestaurantImage.findMany({
+      where: {
+        restaurantId: value.resId,
+      },
+    });
+    console.log(exists);
+
+    if (!exists) {
+      next(createError("Images don't exist", 404));
+      return;
+    }
+
+    await prisma.tempRestaurantImage.deleteMany({
+      where: {
+        id: {
+          in: exists.map((x) => x.id),
+        },
+      },
+    });
+    res.status(200).json({ message: "deleted all restaurant images" });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.mergeResImgWithTemp = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      next(createError("You're unauhorized", 401));
+      return;
+    }
+    // const {error, value} = resIdSchema.validate(req.params)
+    // if(error) {
+    //   next(error)
+    //   return
+    // }
+    const { images } = req.body;
+    const imageIds = images.map((x) => x.id);
+    for (let x of images) {
+      delete x.id;
+    }
+    const output = await prisma.restaurantImage.createMany({
+      data: images,
+    });
+    const found = await prisma.tempRestaurantImage.findMany({
+      where: {
+        restaurantId: {
+          in: imageIds,
+        },
+      },
+    });
+    console.log(output);
+    res.status(201).json(output);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.createEditPending = async (req, res, next) => {
   try {
     console.log(req.body);

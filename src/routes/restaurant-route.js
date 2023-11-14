@@ -23,6 +23,18 @@ router.post(
   upload.array("image", 10),
   resController.createResImgPending
 );
+
+router.post(
+  "/mergeResImgWithTemp",
+  authenticatedMw,
+  resController.mergeResImgWithTemp
+);
+
+router.delete(
+  "/deleteAllTempImg/:resId",
+  authenticatedMw,
+  resController.deleteAllTempImg
+);
 router.get("/getPendingEdit", authenticatedMw, resController.getEditPending); // GET ALL EDIT PENDINGS
 router.delete(
   "/editPending/:pendingId",
