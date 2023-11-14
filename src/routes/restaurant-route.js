@@ -17,8 +17,8 @@ router.post(
   upload.single("profileImg"),
   resController.createEditPending
 ); // CREATE EDIT PENDING
-router.patch(
-  "/createResImgPending/:pendingId",
+router.post(
+  "/createResImgPending",
   authenticatedMw,
   upload.array("image", 10),
   resController.createResImgPending

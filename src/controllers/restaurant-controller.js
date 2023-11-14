@@ -204,21 +204,15 @@ exports.createEditPending = async (req, res, next) => {
 // NEED FIXING *************
 exports.createResImgPending = async (req, res, next) => {
   try {
-    console.log(req.file);
+    console.log("ไอสัส");
+    console.log(req);
     if (!req.user.restaurantName) {
       next(createError("You're unauthorized", 401));
       return;
     }
 
-    const { error, value } = pendingIdSchema.validate(req.params);
-    if (error) {
-      next(error);
-      return;
-    }
-
     if (req.files) {
       for (let x of req.files) {
-        console.log("araiwa", x);
         const images = await upload(x.path);
         console.log("imagesss", images);
         await prisma.tempRestaurantImage.create({
