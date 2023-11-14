@@ -203,13 +203,26 @@ exports.mergeResImgWithTemp = async (req, res, next) => {
     });
     const found = await prisma.tempRestaurantImage.findMany({
       where: {
-        restaurantId: {
+        id: {
           in: imageIds,
         },
       },
     });
-    console.log(output);
-    res.status(201).json(output);
+    if (!found) {
+      next(createError("Images not found", 404));
+      return;
+    }
+    await prisma.tempRestaurantImage.deleteMany({
+      where: {
+        id: {
+          in: imageIds,
+        },
+      },
+    });
+    // console.log("FOUND", found);
+    // await prisma.tempRestaurantImage.deleteMany()
+    // console.log(output);
+    res.status(201).json({ message: "Images have been approved." }, output);
   } catch (err) {
     next(err);
   }
@@ -272,7 +285,6 @@ exports.createEditPending = async (req, res, next) => {
   }
 };
 
-// NEED FIXING *************
 exports.createResImgPending = async (req, res, next) => {
   try {
     console.log(req.files);
