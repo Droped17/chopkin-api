@@ -250,8 +250,8 @@ exports.createEditPending = async (req, res, next) => {
       categoryIndex: +categoryIndex,
       districtIndex: +districtIndex,
       nationIndex: +nationIndex,
-      latitude: parseFloat(position.lat),
-      longitude: parseFloat(position.lng),
+      latitude: parseFloat(position?.lat),
+      longitude: parseFloat(position?.lng),
     };
 
     if (req.file) {
@@ -451,8 +451,8 @@ exports.mergeResInfo = async (req, res, next) => {
       categoryIndex: categoryIndex,
       districtIndex: districtIndex,
       nationIndex: nationIndex,
-      latitude: position.lat,
-      longitude: position.lng,
+      latitude: position?.lat,
+      longitude: position?.lng,
     };
     const resInfo = await prisma.restaurant.update({
       data: data,

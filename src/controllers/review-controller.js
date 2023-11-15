@@ -94,6 +94,21 @@ exports.getAllReviewByRestaurant = async (req, res, next) => {
       where: {
         restaurantId: id,
       },
+      include: {
+        customer: {
+          select: {
+            profileImg: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        ReviewImages: {
+          select: {
+            url: true,
+            reviewId: true,
+          },
+        },
+      },
     });
     res.status(200).json({ reviews });
   } catch (err) {
