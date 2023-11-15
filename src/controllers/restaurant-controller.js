@@ -285,6 +285,19 @@ exports.createEditPending = async (req, res, next) => {
   }
 };
 
+exports.getResImgPending = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      next(createError("You're unauthorized.", 401));
+      return;
+    }
+    const allImg = await prisma.tempRestaurantImage.findMany();
+    res.status(200).json(allImg);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.createResImgPending = async (req, res, next) => {
   try {
     console.log(req.files);
@@ -327,12 +340,6 @@ exports.getEditPending = async (req, res, next) => {
     const pendingEdit = await prisma.restaurantPendingEdit.findMany({
       include: {
         tempBusinessTimes: true,
-        tempRestaurantImages: {
-          select: {
-            id: true,
-            url: true,
-          },
-        },
       },
     });
     res.status(200).json(pendingEdit);

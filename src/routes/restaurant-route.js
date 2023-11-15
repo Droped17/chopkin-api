@@ -17,6 +17,13 @@ router.post(
   upload.single("profileImg"),
   resController.createEditPending
 ); // CREATE EDIT PENDING
+
+router.get(
+  "/getResImgPending",
+  authenticatedMw,
+  resController.getResImgPending
+);
+
 router.post(
   "/createResImgPending",
   authenticatedMw,
