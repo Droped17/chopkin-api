@@ -300,7 +300,29 @@ exports.getResImgPending = async (req, res, next) => {
         },
       },
     });
-    res.status(200).json(allImg);
+    console.log(allImg);
+    // const reduced = allImg.reduce((acc, x) => {
+    //   const obj = {};
+    //   for (x of allImg) {
+    //     if (!obj[x.restaurantId]) {
+    //       obj[x.restaurantId] = {
+    //         ["restaurantName"]: x.restaurant.restaurantName,
+    //       };
+    //     }
+    //   }
+    //   acc = Object.entries(obj);
+    //   return acc;
+    // }, []);
+    const obj = {};
+    for (x of allImg) {
+      if (!obj[x.restaurantId]) {
+        obj[x.restaurantId] = {
+          ["restaurantName"]: x.restaurant.restaurantName,
+        };
+      }
+    }
+    const reduced = Object.entries(obj);
+    res.status(200).json(JSON.stringify(reduced));
   } catch (err) {
     next(err);
   }
