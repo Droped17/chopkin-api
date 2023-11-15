@@ -25,7 +25,7 @@ router.get(
 );
 
 router.get(
-  "getImgPendingByResId/:resId",
+  "/getImgPendingByResId/:resId",
   authenticatedMw,
   resController.getResImgPendingByResId
 );

@@ -312,11 +312,12 @@ exports.getResImgPendingByResId = async (req, res, next) => {
       next(createError("You're unauthorized.", 401));
       return;
     }
-    const { error, value } = resIdSchema(req.params);
+    const { error, value } = resIdSchema.validate(req.params);
     if (error) {
       next(error);
       return;
     }
+    console.log(value);
     const pendingById = await prisma.tempRestaurantImage.findMany({
       where: {
         restaurantId: value.resId,
