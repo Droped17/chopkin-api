@@ -24,6 +24,12 @@ router.get(
   resController.getResImgPending
 );
 
+router.get(
+  "getImgPendingByResId/:resId",
+  authenticatedMw,
+  resController.getResImgPendingByResId
+);
+
 router.post(
   "/createResImgPending",
   authenticatedMw,
