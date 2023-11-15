@@ -306,6 +306,28 @@ exports.getResImgPending = async (req, res, next) => {
   }
 };
 
+exports.getResImgPendingByResId = async (req, res, next) => {
+  try {
+    if (!req.user.isAdmin) {
+      next(createError("You're unauthorized.", 401));
+      return;
+    }
+    const { error, value } = resIdSchema(req.params);
+    if (error) {
+      next(error);
+      return;
+    }
+    const pendingById = await prisma.tempRestaurantImage.findMany({
+      where: {
+        restaurantId: value.resId,
+      },
+    });
+    res.status(200).json(pendingById);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.createResImgPending = async (req, res, next) => {
   try {
     console.log(req.files);
