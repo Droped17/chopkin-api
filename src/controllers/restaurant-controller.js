@@ -291,7 +291,15 @@ exports.getResImgPending = async (req, res, next) => {
       next(createError("You're unauthorized.", 401));
       return;
     }
-    const allImg = await prisma.tempRestaurantImage.findMany();
+    const allImg = await prisma.tempRestaurantImage.findMany({
+      include: {
+        restaurant: {
+          select: {
+            restaurantName: true,
+          },
+        },
+      },
+    });
     res.status(200).json(allImg);
   } catch (err) {
     next(err);
