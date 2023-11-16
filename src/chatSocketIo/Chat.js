@@ -3,7 +3,7 @@ const {Server} = require("socket.io");
 //http://localhost:3000
 const FRONTEND_PATH = "http://localhost:5173";
 
-const setCorsSocketIo = (server)=>{
+const setCorsSocketIo= (server)=>{
     return new Server(server,{
         cors:{
                 origin:FRONTEND_PATH, //react path
