@@ -242,8 +242,9 @@ exports.createEditPending = async (req, res, next) => {
       districtIndex,
       nationIndex,
       businessTime,
-      position,
     } = req.body;
+    const position = JSON.parse(req.body.position);
+    console.log(position);
     const data = {
       restaurantName: restaurantName,
       price: +price,
@@ -251,8 +252,8 @@ exports.createEditPending = async (req, res, next) => {
       categoryIndex: +categoryIndex,
       districtIndex: +districtIndex,
       nationIndex: +nationIndex,
-      latitude: parseFloat(position?.lat),
-      longitude: parseFloat(position?.lng),
+      latitude: parseFloat(position.lat),
+      longitude: parseFloat(position.lng),
     };
 
     if (req.file) {
