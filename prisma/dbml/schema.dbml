@@ -47,6 +47,7 @@ Table Restaurant {
   BusinessTimes BusinessTime [not null]
   RestaurantPendingEdits RestaurantPendingEdit [not null]
   PackagePendings PackagePending [not null]
+  TempRestaurantImage TempRestaurantImage [not null]
 }
 
 Table RestaurantPendingEdit {
@@ -62,7 +63,6 @@ Table RestaurantPendingEdit {
   restaurant Restaurant [not null]
   restaurantId String [not null]
   tempBusinessTimes TempBusinessTime [not null]
-  tempRestaurantImages TempRestaurantImage [not null]
 }
 
 Table RestaurantImage {
@@ -75,8 +75,8 @@ Table RestaurantImage {
 Table TempRestaurantImage {
   id Int [pk, increment]
   url String [not null]
-  restaurantEditPending RestaurantPendingEdit [not null]
-  restaurantPendingEditId Int [not null]
+  restaurant Restaurant [not null]
+  restaurantId String [not null]
 }
 
 Table Package {
@@ -181,7 +181,7 @@ Ref: RestaurantPendingEdit.restaurantId > Restaurant.id [delete: Cascade]
 
 Ref: RestaurantImage.restaurantId > Restaurant.id [delete: Cascade]
 
-Ref: TempRestaurantImage.restaurantPendingEditId > RestaurantPendingEdit.id [delete: Cascade]
+Ref: TempRestaurantImage.restaurantId > Restaurant.id
 
 Ref: Package.restaurantId > Restaurant.id [delete: Cascade]
 

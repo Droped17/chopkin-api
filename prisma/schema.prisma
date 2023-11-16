@@ -57,22 +57,22 @@ model Restaurant {
   BusinessTimes          BusinessTime[]
   RestaurantPendingEdits RestaurantPendingEdit[]
   PackagePendings        PackagePending[]
+  TempRestaurantImage    TempRestaurantImage[]
 }
 
 model RestaurantPendingEdit {
-  id                   Int                   @id @default(autoincrement())
-  restaurantName       String                @unique
-  profileImg           String?
-  latitude             Float?
-  longitude            Float?
-  price                Int
-  categoryIndex        Int
-  districtIndex        Int?
-  nationIndex          Int
-  restaurant           Restaurant            @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
-  restaurantId         String
-  tempBusinessTimes    TempBusinessTime[]
-  tempRestaurantImages TempRestaurantImage[]
+  id                Int                @id @default(autoincrement())
+  restaurantName    String             @unique
+  profileImg        String?
+  latitude          Float?
+  longitude         Float?
+  price             Int
+  categoryIndex     Int
+  districtIndex     Int?
+  nationIndex       Int
+  restaurant        Restaurant         @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId      String
+  tempBusinessTimes TempBusinessTime[]
 }
 
 model RestaurantImage {
@@ -83,10 +83,10 @@ model RestaurantImage {
 }
 
 model TempRestaurantImage {
-  id                      Int                   @id @default(autoincrement())
-  url                     String
-  restaurantEditPending   RestaurantPendingEdit @relation(fields: [restaurantPendingEditId], references: [id], onDelete: Cascade)
-  restaurantPendingEditId Int
+  id           Int        @id @default(autoincrement())
+  url          String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
 }
 
 model Package {
