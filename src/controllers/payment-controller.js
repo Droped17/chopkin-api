@@ -34,7 +34,7 @@ const checkoutBooking = async(req,res,next)=>{
                     unit_amount:package.price*100,//for convert decimal
                     product_data:{
                         name:package.name,
-                        images:[package.img||"https://domf5oio6qrcr.cloudfront.net/medialibrary/6372/202ebeef-6657-44ec-8fff-28352e1f5999.jpg"],//mockup images
+                        images:[package?.img||"https://domf5oio6qrcr.cloudfront.net/medialibrary/6372/202ebeef-6657-44ec-8fff-28352e1f5999.jpg"],//mockup images
                     },
                 },
                 quantity:1,
