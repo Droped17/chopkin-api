@@ -192,6 +192,7 @@ const getAllBooking = async (req, res, next) => {
 				restaurant: true,
 				customer: true,
 				package: true,
+				payment: true,
 			},
 		});
 		res.status(200).json({ message: "Get All Booking", allBooking });
@@ -282,18 +283,18 @@ const updateOrderStatusByBookingId = async (req, res, next) => {
 			},
 		});
 
-		if(!bookingForUpdate){
-            return next(createError("not found this payment",404));
-        }
-		
+		if (!bookingForUpdate) {
+			return next(createError("not found this payment", 404));
+		}
+
 		const updateBooking = await prisma.booking.update({
 			where: {
 				id: bookingId,
 			},
-			data:{
-				orderStatus:orderStatusUpdate
+			data: {
+				orderStatus: orderStatusUpdate,
 			},
-		})
+		});
 
 		res.status(200).json({ message: "update Complete", updateBooking });
 	} catch (error) {
