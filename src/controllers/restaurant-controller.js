@@ -581,3 +581,29 @@ exports.mergeResInfo = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getAvgReviewScore = async (req, res, next) => {
+  try {
+      const allRes = await prisma.restaurant.findMany({
+        include:{
+          Reviews:{
+            select:{
+              score:true
+            }
+          }
+        }
+      });
+      const avgResScore = []
+      allRes.map(e=>{
+        const sumScore = 0;
+        e.score.map(e=>sumScore+e);
+        const restaurantAvgObject = {id:e.id,restaurantName:e.restaurantName,avgScore:sumScore/e.score.length}
+        return avgResScore.push(restaurantAvgObject);
+      });
+
+      res.status(200).json({message:"avg score",avgResScore});
+    }
+    catch(error){
+      next(error);
+    }
+};

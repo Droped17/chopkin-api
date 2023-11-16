@@ -72,4 +72,5 @@ router.patch(
   resController.mergeResInfo
 ); // update res info with temp info
 
+router.get("/review-score",resController.getAvgReviewScore)
 module.exports = router;
