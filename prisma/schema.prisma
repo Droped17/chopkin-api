@@ -25,7 +25,6 @@ model Customer {
   password    String
   Bookings    Booking[]
   Reviews     Review[]
-  ChatRooms   ChatRoom[]
 }
 
 model Admin {
@@ -33,7 +32,6 @@ model Admin {
   isAdmin   Int        @default(1)
   email     String     @unique
   password  String
-  ChatRooms ChatRoom[]
 }
 
 model Restaurant {
@@ -131,7 +129,6 @@ model Booking {
   createdAt      DateTime   @default(now())
   bookingDate    String
   bookingTime    String
-  ChatRooms      ChatRoom[]
 }
 
 model Payment {
@@ -163,12 +160,6 @@ model ReviewImage {
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomIdBySocket String
-  admin          Admin?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
-  adminId        Int?
-  customerId     String
-  customer       Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  bookingId      String?
-  booking        Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }
 
 model BusinessTime {

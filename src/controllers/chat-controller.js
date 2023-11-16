@@ -3,21 +3,15 @@ const createError = require("../utils/create-error");
 require("dotenv");
 // model ChatRoom {
 //     id             Int      @id @default(autoincrement())
-//     roomIdBySocket String
-//     adminId        String
-//     admin          Admin    @relation(fields: [adminId], references: [id])
-//     customerId     String
-//     customer       Customer @relation(fields: [customerId], references: [id])
-//     bookingId      String?
-//     booking        Booking? @relation(fields: [bookingId], references: [id])
+//     roomId         string
 //   }
 
 
-const UserCreateRoom = ()=>{
+const UserCreateRoom = (req,res,next)=>{
 
 }
 
-const DeleteRoom = ()=>{
+const DeleteRoom = (req,res,next)=>{
     
 }
 
