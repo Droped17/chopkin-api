@@ -48,6 +48,12 @@ router.delete(
   authenticatedMw,
   resController.deleteAllTempImg
 );
+
+router.delete(
+  "/deleteAResImg/:imgId",
+  authenticatedMw,
+  resController.deleteAResImg
+);
 router.get("/getPendingEdit", authenticatedMw, resController.getEditPending); // GET ALL EDIT PENDINGS
 router.delete(
   "/editPending/:pendingId",

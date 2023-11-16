@@ -18,3 +18,7 @@ exports.packageIdSchema = Joi.object({
 exports.pendingIdSchema = Joi.object({
   pendingId: Joi.number().integer().positive().required(),
 });
+
+exports.imgIdSchema = Joi.object({
+  imgId: Joi.number().integer().positive().required(),
+});
