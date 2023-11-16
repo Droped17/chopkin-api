@@ -7,12 +7,29 @@ require("dotenv");
 //   }
 
 
-const UserCreateRoom = (req,res,next)=>{
+const UserCreateRoom = async(req,res,next)=>{
+    try{
+        const roomId = req.body.roomId;
 
+        await prisma.chatRoom.create({
+            data:{
+                
+            }
+        })
+
+    }
+    catch(error){
+        next(error);
+    }
 }
 
-const DeleteRoom = (req,res,next)=>{
-    
+const DeleteRoom = async(req,res,next)=>{
+    try{
+
+    }
+    catch(error){
+        next(error);
+    }
 }
 
 

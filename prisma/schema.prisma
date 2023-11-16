@@ -159,7 +159,7 @@ model ReviewImage {
 
 model ChatRoom {
   id             Int      @id @default(autoincrement())
-  roomIdBySocket String
+  roomId String
 }
 
 model BusinessTime {
