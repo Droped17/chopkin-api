@@ -34,6 +34,7 @@ app.use("/booking",bookingRoute);
 app.use("/payment",paymentRoute);
 app.use("/google", googleRoute);
 app.use('/customer', customerRoute)
+app.use("/chat",chatRoute);
 
 app.use(notFoundMiddleware);
 app.use(errorMw);

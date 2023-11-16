@@ -16,19 +16,24 @@ const GetAllRoom = async(req,res,next)=>{
 const UserCreateRoom = async(req,res,next)=>{
     try{
         const roomId = req.body.roomId;
+        const name = req.body.name;
 
+        // console.log(roomId);
         //validate
-        const isHaveThisRoomId = prisma.chatRoom.findFirst({
+        const isHaveThisRoomId = await prisma.chatRoom.findFirst({
             where:{
                 roomId:roomId
             }
         })
 
+        // console.log(isHaveThisRoomId)
+
         if(isHaveThisRoomId) return next(createError("have this roomId:"+isHaveThisRoomId.roomId+"on database",405));
 
         const newRoom = await prisma.chatRoom.create({
             data:{
-                roomId:roomId
+                roomId:roomId,
+                name:name
             }
         });
 
@@ -48,8 +53,16 @@ const DeleteRoomById = async(req,res,next)=>{
                 roomId:roomId
             }
         });
+        console.log(isHaveThisRoomId)
+        if(!isHaveThisRoomId)return next(createError("not found this RoomId:"+roomId,405));
 
-        if(!isHaveThisRoomId)return res
+        const deletedChatRoom =  await prisma.chatRoom.delete({
+            where:{
+                id:isHaveThisRoomId.id
+            }
+        });
+
+        res.status(200).json({message:"delete success",deletedChatRoom});
 
     }
     catch(error){
@@ -59,6 +72,7 @@ const DeleteRoomById = async(req,res,next)=>{
 
 exports.UserCreateRoom = UserCreateRoom;
 exports.DeleteRoomById = DeleteRoomById;
+exports.GetAllRoom = GetAllRoom;
 
 
 

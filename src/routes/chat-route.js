@@ -1,8 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const {UserCreateRoom,DeleteRoomById} = require("../controllers/chat-controller");
+const {UserCreateRoom,DeleteRoomById,GetAllRoom} = require("../controllers/chat-controller");
 
-router.post("",UserCreateRoom);
-router.delete("",DeleteRoomById);
+// chat/roomId:
+
+router.get("/room/:roomId",GetAllRoom);
+router.post("/create",UserCreateRoom);
+router.delete("/delete/:roomId",DeleteRoomById);
 
 module.exports = router;
