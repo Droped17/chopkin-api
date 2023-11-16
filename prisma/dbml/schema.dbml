@@ -13,7 +13,6 @@ Table Customer {
   password String [not null]
   Bookings Booking [not null]
   Reviews Review [not null]
-  ChatRooms ChatRoom [not null]
 }
 
 Table Admin {
@@ -21,7 +20,6 @@ Table Admin {
   isAdmin Int [not null, default: 1]
   email String [unique, not null]
   password String [not null]
-  ChatRooms ChatRoom [not null]
 }
 
 Table Restaurant {
@@ -119,7 +117,6 @@ Table Booking {
   createdAt DateTime [default: `now()`, not null]
   bookingDate String [not null]
   bookingTime String [not null]
-  ChatRooms ChatRoom [not null]
 }
 
 Table Payment {
@@ -151,12 +148,6 @@ Table ReviewImage {
 Table ChatRoom {
   id Int [pk, increment]
   roomIdBySocket String [not null]
-  admin Admin
-  adminId Int
-  customerId String [not null]
-  customer Customer [not null]
-  bookingId String
-  booking Booking
 }
 
 Table BusinessTime {
@@ -200,12 +191,6 @@ Ref: Review.restaurantId > Restaurant.id [delete: Cascade]
 Ref: Review.customerId > Customer.id [delete: Cascade]
 
 Ref: ReviewImage.reviewId > Review.id [delete: Cascade]
-
-Ref: ChatRoom.adminId > Admin.id [delete: Cascade]
-
-Ref: ChatRoom.customerId > Customer.id [delete: Cascade]
-
-Ref: ChatRoom.bookingId > Booking.id [delete: Cascade]
 
 Ref: BusinessTime.restaurantId > Restaurant.id [delete: Cascade]
 
