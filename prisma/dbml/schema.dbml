@@ -148,6 +148,7 @@ Table ReviewImage {
 Table ChatRoom {
   id Int [pk, increment]
   roomId String [not null]
+  name String [not null]
 }
 
 Table BusinessTime {

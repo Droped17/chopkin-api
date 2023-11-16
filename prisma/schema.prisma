@@ -160,6 +160,7 @@ model ReviewImage {
 model ChatRoom {
   id             Int      @id @default(autoincrement())
   roomId String
+  name String
 }
 
 model BusinessTime {
